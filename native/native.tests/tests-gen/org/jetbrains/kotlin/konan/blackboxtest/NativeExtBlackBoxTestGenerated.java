@@ -15298,6 +15298,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt24209.kt")
+            public void testKt24209() throws Exception {
+                runTest("compiler/testData/codegen/box/elvis/kt24209.kt");
+            }
+
+            @Test
             @TestMetadata("kt6694ExactAnnotationForElvis.kt")
             public void testKt6694ExactAnnotationForElvis() throws Exception {
                 runTest("compiler/testData/codegen/box/elvis/kt6694ExactAnnotationForElvis.kt");
@@ -26090,6 +26096,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt12189_noClashOnDifferentCase.kt")
+            public void testKt12189_noClashOnDifferentCase() throws Exception {
+                runTest("compiler/testData/codegen/box/jvmField/kt12189_noClashOnDifferentCase.kt");
+            }
+
+            @Test
             @TestMetadata("kt47328.kt")
             public void testKt47328() throws Exception {
                 runTest("compiler/testData/codegen/box/jvmField/kt47328.kt");
@@ -29672,6 +29684,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @TestMetadata("innerClass.kt")
             public void testInnerClass() throws Exception {
                 runTest("compiler/testData/codegen/box/parametersMetadata/innerClass.kt");
+            }
+
+            @Test
+            @TestMetadata("jvmOverloads.kt")
+            public void testJvmOverloads() throws Exception {
+                runTest("compiler/testData/codegen/box/parametersMetadata/jvmOverloads.kt");
             }
 
             @Test
@@ -40665,6 +40683,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt47279.kt")
+            public void testKt47279() throws Exception {
+                runTest("compiler/testData/codegen/box/regressions/kt47279.kt");
+            }
+
+            @Test
             @TestMetadata("kt5056.kt")
             public void testKt5056() throws Exception {
                 runTest("compiler/testData/codegen/box/regressions/kt5056.kt");
@@ -47998,6 +48022,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt48498.kt")
+            public void testKt48498() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/delegatedProperty/kt48498.kt");
+            }
+
+            @Test
             @TestMetadata("local.kt")
             public void testLocal() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/delegatedProperty/local.kt");
@@ -48477,6 +48507,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @TestMetadata("kt10259.kt")
             public void testKt10259() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/innerClasses/kt10259.kt");
+            }
+
+            @Test
+            @TestMetadata("kt12126.kt")
+            public void testKt12126() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/innerClasses/kt12126.kt");
             }
         }
 
