@@ -378,7 +378,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
     // TODO get rid of 'caller' argument
-    internal fun mapToCallableMethod(expression: IrCall, caller: IrFunction?): IrCallableMethod {
+    fun mapToCallableMethod(expression: IrCall, caller: IrFunction?): IrCallableMethod {
         val callee = expression.symbol.owner
         val calleeParent = expression.superQualifierSymbol?.owner
             ?: expression.dispatchReceiver?.type?.classOrNull?.owner?.let {
