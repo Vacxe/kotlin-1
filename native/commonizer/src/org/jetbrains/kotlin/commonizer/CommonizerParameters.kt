@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.mergedtree.CirFictitiousFunctionClassifiers
+import org.jetbrains.kotlin.commonizer.mergedtree.CirIntegerTypesProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiersByModules
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
@@ -40,6 +41,11 @@ internal fun CommonizerParameters.dependencyClassifiers(target: CommonizerTarget
 
 
     return CirProvidedClassifiers.of(
-        *listOfNotNull(CirFictitiousFunctionClassifiers, providedByTarget, providedByDependencies).toTypedArray()
+        *listOfNotNull(
+            CirFictitiousFunctionClassifiers,
+            providedByTarget,
+            providedByDependencies,
+            CirIntegerTypesProvidedClassifiers
+        ).toTypedArray()
     )
 }

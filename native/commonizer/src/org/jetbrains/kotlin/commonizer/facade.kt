@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.commonizer
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.core.CommonizationVisitor
-import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
-import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonizedClassifierNodes
-import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommon
-import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer
 import org.jetbrains.kotlin.commonizer.transformer.InlineTypeAliasCirNodeTransformer
+import org.jetbrains.kotlin.commonizer.transformer.phantom.PhantomGenerationTransformer
 import org.jetbrains.kotlin.commonizer.transformer.ReApproximationCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.ReApproximationCirNodeTransformer.SignatureBuildingContextProvider
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
@@ -58,7 +56,6 @@ internal fun commonizeTarget(
             targetDependencies = availableTrees.mapValue(CirTreeRoot::dependencies),
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = parameters.dependencyClassifiers(output)
-
         )
 
         val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees)
@@ -74,6 +71,8 @@ internal fun commonizeTarget(
             parameters.storageManager, classifiers,
             SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = true)
         ).invoke(mergedTree)
+
+        PhantomGenerationTransformer(parameters.storageManager).invoke(mergedTree)
 
         mergedTree.accept(CommonizationVisitor(mergedTree), Unit)
 
