@@ -62,6 +62,11 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
                     "Exposed types should be stable across all platforms that share this declaration.",
             RENDER_TYPE,
         )
+        put(
+            ErrorsNative.PHANTOM_CLASSIFIER,
+            "Type {0} is intangible and represents common API, so it shouldn't be used explicitly",
+            RENDER_TYPE
+        )
     }
 }
 

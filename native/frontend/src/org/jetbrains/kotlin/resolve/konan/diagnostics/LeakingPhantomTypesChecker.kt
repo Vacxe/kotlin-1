@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.PHANTOM_TYPES
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageChecker
+import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -118,6 +121,14 @@ object LeakingPhantomTypesChecker {
         }
     }
 
+    object ClassifierUsage : ClassifierUsageChecker {
+        override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
+            targetDescriptor.defaultType.findPhantom()?.let { phantomType ->
+                context.trace.reportDiagnosticOnce(ErrorsNative.PHANTOM_CLASSIFIER.on(element, phantomType))
+            }
+        }
+    }
+
     private fun report(target: KtCallableDeclaration, type: KotlinType, trace: BindingTrace) {
         trace.reportDiagnosticOnce(ErrorsNative.LEAKING_PHANTOM_TYPE.on(target, type))
     }
@@ -125,7 +136,7 @@ object LeakingPhantomTypesChecker {
     private fun KotlinType.findPhantom(): KotlinType? {
         var phantom: KotlinType? = null
         contains { type ->
-            if (type.constructor.declarationDescriptor?.fqNameSafe in PHANTOM_FQ_NAMES) {
+            if (type.constructor.declarationDescriptor?.isPhantom == true) {
                 phantom = type
                 true
             } else
@@ -133,6 +144,9 @@ object LeakingPhantomTypesChecker {
         }
         return phantom
     }
+
+    private val DeclarationDescriptor.isPhantom: Boolean
+        get() = fqNameSafe in PHANTOM_FQ_NAMES
 
     private val PHANTOM_FQ_NAMES = PHANTOM_TYPES.map { it.asSingleFqName() }.toSet()
 }

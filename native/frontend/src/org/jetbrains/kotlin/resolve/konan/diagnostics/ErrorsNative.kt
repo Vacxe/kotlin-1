@@ -63,6 +63,9 @@ object ErrorsNative {
         PositioningStrategies.SUPERTYPES_LIST,
     )
 
+    @JvmField
+    val PHANTOM_CLASSIFIER = DiagnosticFactory1.create<PsiElement, KotlinType>(Severity.ERROR)
+
     init {
         Errors.Initializer.initializeFactoryNames(ErrorsNative::class.java)
     }
