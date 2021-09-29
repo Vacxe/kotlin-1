@@ -138,6 +138,74 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             )
         }
     }
+
+    // Int + Long -> SingedInteger; SignedInteger + Long -> SignedInteger
+    fun `test two step commonization with two intermediate targets and different aliases`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
+
+            "a" withSource """
+                package test
+                
+                typealias A = Int
+                typealias Integer = A
+            """.trimIndent()
+
+            "b" withSource """
+                package test
+                
+                typealias B = Long
+                typealias Integer = B
+            """.trimIndent()
+
+            "c" withSource """
+                package test
+                
+                typealias A = Short
+                typealias Integer = A
+            """.trimIndent()
+
+            "d" withSource """
+                package test
+                
+                typealias C = Int
+                typealias Integer = C
+            """.trimIndent()
+        }
+
+        result.assertCommonized("(a, b)") {
+            generatedPhantoms()
+            source(
+                """
+                package test
+                
+                expect class Integer : Number(), SignedInteger<Integer>
+            """.trimIndent()
+            )
+        }
+
+        result.assertCommonized("(c, d)") {
+            generatedPhantoms()
+            source(
+                """
+                package test
+                
+                expect class Integer : Number(), SignedInteger<Integer>
+            """.trimIndent()
+            )
+        }
+
+        result.assertCommonized("(a, b, c, d)") {
+            generatedPhantoms()
+            source(
+                """
+                package test
+                
+                expect class Integer : Number(), SignedInteger<Integer>
+            """.trimIndent()
+            )
+        }
+    }
 }
 
 private fun InlineSourceBuilder.ModuleBuilder.generatedPhantoms() {
