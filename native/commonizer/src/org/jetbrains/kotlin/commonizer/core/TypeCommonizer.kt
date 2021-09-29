@@ -42,7 +42,7 @@ class TypeCommonizer(
 
         fun withOptimisticNumberTypeCommonizationEnabled(enabled: Boolean = true): Options {
             return if (enableOptimisticNumberTypeCommonization == enabled) this
-            else copy(enableOptimisticNumberTypeCommonization = enabled)
+            else copy(enableOptimisticNumberTypeCommonization = false)
         }
 
         fun withCovariantNullabilityCommonizationEnabled(enabled: Boolean = true): Options {
