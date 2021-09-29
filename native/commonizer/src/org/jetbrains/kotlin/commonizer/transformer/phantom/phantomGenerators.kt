@@ -30,7 +30,6 @@ internal fun convertExtensionFunction(generationContext: GenerationContext, rece
             CirClassType.createInterned(
                 classId = CirEntityId.create("kotlin/Any"),
                 outerType = null,
-                visibility = Visibilities.Public,
                 arguments = emptyList(),
                 isMarkedNullable = false,
             ),
@@ -53,7 +52,6 @@ internal fun convertExtensionFunction(generationContext: GenerationContext, rece
             type = CirClassType.createInterned(
                 classId = receiverType,
                 outerType = null,
-                visibility = Visibilities.Public,
                 arguments = SmartList(CirStarTypeProjection),
                 isMarkedNullable = false,
             ),
@@ -85,7 +83,6 @@ internal fun generalizedIntegerInterface(generationContext: GenerationContext, e
             CirClassType.createInterned(
                 classId = entityId,
                 outerType = null,
-                visibility = Visibilities.Public,
                 arguments = SmartList(
                     CirRegularTypeProjection(
                         projectionKind = Variance.INVARIANT,
@@ -316,7 +313,6 @@ internal fun abstractIntegerConversionMember(context: GenerationContext, name: C
         returnType = CirClassType.createInterned(
             returnTypeId,
             outerType = null,
-            visibility = Visibilities.Public,
             arguments = emptyList(),
             isMarkedNullable = false,
         ),
@@ -344,7 +340,6 @@ internal fun cirTypeParameterWithSelfBound(boundId: CirEntityId): CirTypeParamet
             CirClassType.createInterned(
                 classId = boundId,
                 outerType = null,
-                visibility = Visibilities.Public,
                 arguments = SmartList(
                     CirRegularTypeProjection(
                         projectionKind = Variance.INVARIANT,
@@ -363,7 +358,6 @@ internal fun varOfClass(context: GenerationContext, id: CirEntityId, boundId: Ci
         CirClassType.createInterned(
             classId = CVARIABLE_ID.asCirEntityId(),
             outerType = null,
-            visibility = Visibilities.Public,
             arguments = emptyList(),
             isMarkedNullable = false,
         )
@@ -399,7 +393,6 @@ internal fun valueExtensionProperty(context: GenerationContext, upperBoundId: Ci
         type = CirClassType.createInterned(
             classId = receiverId,
             outerType = null,
-            visibility = Visibilities.Public,
             arguments = SmartList(
                 CirRegularTypeProjection(
                     projectionKind = Variance.INVARIANT,
@@ -439,7 +432,7 @@ internal fun valueExtensionProperty(context: GenerationContext, upperBoundId: Ci
     )
 
     return GeneratedProperty(
-        approximationKey = PropertyApproximationKey.create(CirMemberContext.empty, valueProperty),
+        approximationKey = PropertyApproximationKey.create(valueProperty, SignatureBuildingContext(CirMemberContext.empty, valueProperty)),
         propertyNode = CirPropertyNode(
             targetDeclarations = CommonizedGroup(context.groupSize) { valueProperty },
             commonDeclaration = context.storageManager.createNullableLazyValue { valueProperty },

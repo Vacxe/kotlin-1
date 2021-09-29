@@ -87,20 +87,18 @@ internal fun CirFunction.toGeneratedFunction(
     )
 
     return GeneratedFunction(
-        FunctionApproximationKey.create(memberContext, this),
+        FunctionApproximationKey.create(this, SignatureBuildingContext(memberContext, this)),
         functionNode
     )
 }
 
 internal fun CirEntityId.toCirType(
     outerType: CirClassType? = null,
-    visibility: Visibility = Visibilities.Public,
     arguments: List<CirTypeProjection> = emptyList(),
     isMarkedNullable: Boolean = false,
 ): CirType = CirClassType.createInterned(
     this,
     outerType = outerType,
-    visibility = visibility,
     arguments = arguments,
     isMarkedNullable = isMarkedNullable,
 )

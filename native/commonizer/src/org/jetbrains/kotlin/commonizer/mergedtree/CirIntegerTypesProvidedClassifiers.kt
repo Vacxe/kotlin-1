@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.commonizer.mergedtree
 
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.ilt.NumericCirEntityIds
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -20,6 +21,9 @@ object CirIntegerTypesProvidedClassifiers : CirProvidedClassifiers {
             in NumericCirEntityIds.PHANTOM_TYPE_IDS -> fakeClassifier
             else -> null
         }
+
+    // TODO now: check correctness
+    override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId> = emptyList()
 
     private val fakeClassifier = CirProvided.RegularClass(
         listOf(CirProvided.TypeParameter(0, Variance.INVARIANT)),

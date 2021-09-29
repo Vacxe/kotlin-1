@@ -120,7 +120,6 @@ internal class InlineTypeAliasCirNodeTransformer(
                             CirClassType.createInterned(
                                 classId = artificialClassNode.id,
                                 outerType = null,
-                                visibility = Visibilities.Public,
                                 arguments = emptyList(),
                                 isMarkedNullable = false,
                             )
@@ -311,14 +310,12 @@ private fun phantomIntegerSupertypesIfAny(typeAlias: CirTypeAlias, integerSupert
             CirClassType.createInterned(
                 classId = PHANTOM_SIGNED_INTEGER.asCirEntityId(),
                 outerType = null,
-                visibility = Visibilities.DEFAULT_VISIBILITY,
                 arguments = SmartList(
                     CirRegularTypeProjection(
                         projectionKind = Variance.INVARIANT,
                         type = CirClassType.createInterned(
                             classId = integerSupertypeArgumentId,
                             outerType = null,
-                            visibility = Visibilities.Public,
                             arguments = emptyList(),
                             isMarkedNullable = false,
                         )
@@ -331,14 +328,12 @@ private fun phantomIntegerSupertypesIfAny(typeAlias: CirTypeAlias, integerSupert
             CirClassType.createInterned(
                 classId = PHANTOM_UNSIGNED_INTEGER.asCirEntityId(),
                 outerType = null,
-                visibility = Visibilities.DEFAULT_VISIBILITY,
                 arguments = SmartList(
                     CirRegularTypeProjection(
                         projectionKind = Variance.INVARIANT,
                         type = CirClassType.createInterned(
                             classId = integerSupertypeArgumentId,
                             outerType = null,
-                            visibility = Visibilities.Public,
                             arguments = emptyList(),
                             isMarkedNullable = false,
                         )
@@ -357,14 +352,12 @@ private fun phantomIntegerVariableSupertypesIfAny(classifierId: CirEntityId, int
             CirClassType.createInterned(
                 classId = PHANTOM_UNSIGNED_VAR_OF.asCirEntityId(),
                 outerType = null,
-                visibility = Visibilities.DEFAULT_VISIBILITY,
                 arguments = SmartList(
                     CirRegularTypeProjection(
                         projectionKind = Variance.INVARIANT,
                         type = CirClassType.createInterned(
                             classId = integerSupertypeArgumentId,
                             outerType = null,
-                            visibility = Visibilities.Public,
                             arguments = emptyList(),
                             isMarkedNullable = false,
                         )
@@ -377,14 +370,12 @@ private fun phantomIntegerVariableSupertypesIfAny(classifierId: CirEntityId, int
             CirClassType.createInterned(
                 classId = PHANTOM_SIGNED_VAR_OF.asCirEntityId(),
                 outerType = null,
-                visibility = Visibilities.DEFAULT_VISIBILITY,
                 arguments = SmartList(
                     CirRegularTypeProjection(
                         projectionKind = Variance.INVARIANT,
                         type = CirClassType.createInterned(
                             classId = integerSupertypeArgumentId,
                             outerType = null,
-                            visibility = Visibilities.Public,
                             arguments = emptyList(),
                             isMarkedNullable = false,
                         )
