@@ -91,6 +91,53 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             )
         }
     }
+
+    // Int + Long -> SingedInteger; SignedInteger + Long -> SignedInteger
+    fun `test two step commonization emits correct phantom supertypes`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(a, b, c)")
+
+            "a" withSource """
+                package test
+                
+                typealias Integer = Int
+            """.trimIndent()
+
+            "b" withSource """
+                package test
+                
+                typealias Integer = Long
+            """.trimIndent()
+
+            "c" withSource """
+                package test
+                
+                typealias Integer = Long
+            """.trimIndent()
+        }
+
+        result.assertCommonized("(a, b)") {
+            generatedPhantoms()
+            source(
+                """
+                package test
+                
+                expect class Integer : Number(), SignedInteger<Integer>
+            """.trimIndent()
+            )
+        }
+
+        result.assertCommonized("(a, b, c)") {
+            generatedPhantoms()
+            source(
+                """
+                package test
+                
+                expect class Integer : Number(), SignedInteger<Integer>
+            """.trimIndent()
+            )
+        }
+    }
 }
 
 private fun InlineSourceBuilder.ModuleBuilder.generatedPhantoms() {

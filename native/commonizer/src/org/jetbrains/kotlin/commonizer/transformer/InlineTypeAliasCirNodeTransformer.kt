@@ -61,11 +61,8 @@ internal class InlineTypeAliasCirNodeTransformer(
         val classNodeIndex = ClassNodeIndex(module)
         module.packages.values.forEach { packageNode ->
             for (typeAliasNode in packageNode.typeAliases.values) {
-                if (typeAliasNode.id in classNodeIndex)
-                    continue
-
-                val newArtificialNode = packageNode.createArtificialClassNode(typeAliasNode)
-                fillArtificialClassNode(typeAliasNode, newArtificialNode, classNodeIndex)
+                val artificialClassNode = classNodeIndex[typeAliasNode.id] ?: packageNode.createArtificialClassNode(typeAliasNode)
+                fillArtificialClassNode(typeAliasNode, artificialClassNode, classNodeIndex)
             }
         }
     }
@@ -90,7 +87,7 @@ internal class InlineTypeAliasCirNodeTransformer(
         targetIndex: Int
     ) {
         if (artificialClassNode.targetDeclarations[targetIndex] != null)
-            throw AssertionError("Target declaration in newly created artificial class is not empty")
+            return
 
         if (typeAlias.expandedType.classifierId in NumericCirEntityIds.INTEGER_IDS) {
             artificialClassNode.targetDeclarations[targetIndex] =
