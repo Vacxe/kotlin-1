@@ -71,25 +71,10 @@ private val floatingPointVars = SubstitutableNumbers(
 
 internal object OptimisticNumbersTypeCommonizer : AssociativeCommonizer<CirClassType> {
     override fun commonize(first: CirClassType, second: CirClassType): CirClassType? {
-        return signedIntegers.choose(first, second)
-            ?: unsignedIntegers.choose(first, second)
-            ?: floatingPoints.choose(first, second)
-            ?: signedVarIntegers.choose(first, second)
-            ?: unsignedVarIntegers.choose(first, second)
-            ?: floatingPointVars.choose(first, second)
+        return null
     }
 
     fun isOptimisticallySubstitutable(classId: CirEntityId): Boolean {
-        val firstPackageSegment = classId.packageName.segments.firstOrNull()
-        if (firstPackageSegment != "kotlinx" && firstPackageSegment != "kotlin") {
-            return false
-        }
-
-        return classId in signedIntegers
-                || classId in unsignedIntegers
-                || classId in floatingPoints
-                || classId in signedVarIntegers
-                || classId in unsignedVarIntegers
-                || classId in floatingPointVars
+        return false
     }
 }
