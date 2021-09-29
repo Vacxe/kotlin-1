@@ -39,7 +39,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
                 """
                     package test                    
 
-                    expect class ilt_t : SignedInteger<ilt_t>
+                    expect class ilt_t : Number(), SignedInteger<ilt_t>
                     typealias ilt_t_alias = ilt_t
                 """.trimIndent(),
                 name = "test.kt"
@@ -57,8 +57,8 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
                 source(
                     """
                     package kotlinx.cinterop
-                    public class IntVarOf<T : Int>
-                    public class LongVarOf<T : Long>
+                    class IntVarOf<T : Int>
+                    class LongVarOf<T : Long>
                 """.trimIndent()
                 )
             }
@@ -85,7 +85,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             source(
                 name = "test.kt", content = """
                 package test
-                expect class Ilt : SignedInteger<Ilt>
+                expect class Ilt : Number(), SignedInteger<Ilt>
                 expect class IltVar : kotlinx.cinterop.SignedVarOf<Ilt>
             """.trimIndent()
             )
@@ -151,200 +151,200 @@ private fun InlineSourceBuilder.ModuleBuilder.generatedPhantoms() {
             class UInt
             class ULong            
 
-            public open expect interface UnsignedInteger<SELF : UnsignedInteger<SELF>> {
-                public final expect inline infix fun and(other: SELF): SELF 
+            expect interface UnsignedInteger<SELF : UnsignedInteger<SELF>> {
+                expect inline infix fun and(other: SELF): SELF 
 
-                public final expect inline operator fun compareTo(other: UShort): Int 
+                expect inline operator fun compareTo(other: UShort): Int 
 
-                public final expect inline operator fun compareTo(other: UInt): Int 
+                expect inline operator fun compareTo(other: UInt): Int 
 
-                public final expect inline operator fun compareTo(other: UnsignedInteger<*>): Int 
+                expect inline operator fun compareTo(other: UnsignedInteger<*>): Int 
 
-                public final expect inline operator fun compareTo(other: ULong): Int 
+                expect inline operator fun compareTo(other: ULong): Int 
 
-                public final expect inline operator fun compareTo(other: UByte): Int 
+                expect inline operator fun compareTo(other: UByte): Int 
 
-                public final expect inline operator fun dec(): SELF 
+                expect inline operator fun dec(): SELF 
 
-                public final expect inline operator fun div(other: UShort): UnsignedInteger<*> 
+                expect inline operator fun div(other: UShort): UnsignedInteger<*> 
 
-                public final expect inline operator fun div(other: UInt): UnsignedInteger<*> 
+                expect inline operator fun div(other: UInt): UnsignedInteger<*> 
 
-                public final expect inline operator fun div(other: ULong): UnsignedInteger<*> 
+                expect inline operator fun div(other: ULong): UnsignedInteger<*> 
 
-                public final expect inline operator fun div(other: UnsignedInteger<*>): UnsignedInteger<*> 
+                expect inline operator fun div(other: UnsignedInteger<*>): UnsignedInteger<*> 
 
-                public final expect inline operator fun div(other: UByte): UnsignedInteger<*> 
+                expect inline operator fun div(other: UByte): UnsignedInteger<*> 
 
-                public final expect inline operator fun inc(): SELF 
+                expect inline operator fun inc(): SELF 
 
-                public final expect inline fun inv(): SELF 
+                expect inline fun inv(): SELF 
 
-                public final expect inline operator fun minus(other: UnsignedInteger<*>): UnsignedInteger<*> 
+                expect inline operator fun minus(other: UnsignedInteger<*>): UnsignedInteger<*> 
 
-                public final expect inline operator fun minus(other: ULong): UnsignedInteger<*> 
+                expect inline operator fun minus(other: ULong): UnsignedInteger<*> 
 
-                public final expect inline operator fun minus(other: UByte): UnsignedInteger<*> 
+                expect inline operator fun minus(other: UByte): UnsignedInteger<*> 
 
-                public final expect inline operator fun minus(other: UShort): UnsignedInteger<*> 
+                expect inline operator fun minus(other: UShort): UnsignedInteger<*> 
 
-                public final expect inline operator fun minus(other: UInt): UnsignedInteger<*> 
+                expect inline operator fun minus(other: UInt): UnsignedInteger<*> 
 
-                public final expect inline infix fun or(other: SELF): SELF 
+                expect inline infix fun or(other: SELF): SELF 
 
-                public final expect inline operator fun plus(other: UByte): UnsignedInteger<*> 
+                expect inline operator fun plus(other: UByte): UnsignedInteger<*> 
 
-                public final expect inline operator fun plus(other: UShort): UnsignedInteger<*> 
+                expect inline operator fun plus(other: UShort): UnsignedInteger<*> 
 
-                public final expect inline operator fun plus(other: UInt): UnsignedInteger<*> 
+                expect inline operator fun plus(other: UInt): UnsignedInteger<*> 
 
-                public final expect inline operator fun plus(other: ULong): UnsignedInteger<*> 
+                expect inline operator fun plus(other: ULong): UnsignedInteger<*> 
 
-                public final expect inline operator fun plus(other: UnsignedInteger<*>): UnsignedInteger<*> 
+                expect inline operator fun plus(other: UnsignedInteger<*>): UnsignedInteger<*> 
 
-                public final expect inline operator fun rem(other: UInt): UnsignedInteger<*> 
+                expect inline operator fun rem(other: UInt): UnsignedInteger<*> 
 
-                public final expect inline operator fun rem(other: UnsignedInteger<*>): UnsignedInteger<*> 
+                expect inline operator fun rem(other: UnsignedInteger<*>): UnsignedInteger<*> 
 
-                public final expect inline operator fun rem(other: UShort): UnsignedInteger<*> 
+                expect inline operator fun rem(other: UShort): UnsignedInteger<*> 
 
-                public final expect inline operator fun rem(other: ULong): UnsignedInteger<*> 
+                expect inline operator fun rem(other: ULong): UnsignedInteger<*> 
 
-                public final expect inline operator fun rem(other: UByte): UnsignedInteger<*> 
+                expect inline operator fun rem(other: UByte): UnsignedInteger<*> 
 
-                public final expect inline infix fun shl(bitCount: Int): SELF 
+                expect inline infix fun shl(bitCount: Int): SELF 
 
-                public final expect inline infix fun shr(bitCount: Int): SELF 
+                expect inline infix fun shr(bitCount: Int): SELF 
 
-                public final expect inline operator fun times(other: UInt): UnsignedInteger<*> 
+                expect inline operator fun times(other: UInt): UnsignedInteger<*> 
 
-                public final expect inline operator fun times(other: UnsignedInteger<*>): UnsignedInteger<*> 
+                expect inline operator fun times(other: UnsignedInteger<*>): UnsignedInteger<*> 
 
-                public final expect inline operator fun times(other: ULong): UnsignedInteger<*> 
+                expect inline operator fun times(other: ULong): UnsignedInteger<*> 
 
-                public final expect inline operator fun times(other: UByte): UnsignedInteger<*> 
+                expect inline operator fun times(other: UByte): UnsignedInteger<*> 
 
-                public final expect inline operator fun times(other: UShort): UnsignedInteger<*> 
+                expect inline operator fun times(other: UShort): UnsignedInteger<*> 
 
-                public final expect inline fun toByte(): Byte 
+                expect inline fun toByte(): Byte 
 
-                public final expect inline fun toDouble(): Double 
+                expect inline fun toDouble(): Double 
 
-                public final expect inline fun toFloat(): Float 
+                expect inline fun toFloat(): Float 
 
-                public final expect inline fun toInt(): Int 
+                expect inline fun toInt(): Int 
 
-                public final expect inline fun toLong(): Long 
+                expect inline fun toLong(): Long 
 
-                public final expect inline fun toShort(): Short 
+                expect inline fun toShort(): Short 
 
-                public final expect inline fun toUByte(): UByte 
+                expect inline fun toUByte(): UByte 
 
-                public final expect inline fun toUInt(): UInt 
+                expect inline fun toUInt(): UInt 
 
-                public final expect inline fun toULong(): ULong 
+                expect inline fun toULong(): ULong 
 
-                public final expect inline fun toUShort(): UShort 
+                expect inline fun toUShort(): UShort 
 
-                public final expect inline infix fun xor(other: SELF): SELF 
+                expect inline infix fun xor(other: SELF): SELF 
             }
 
-            public open expect interface SignedInteger<SELF : SignedInteger<SELF>> {
-                public final external expect infix fun and(other: SELF): SELF 
+            expect interface SignedInteger<SELF : SignedInteger<SELF>> {
+                expect external infix fun and(other: SELF): SELF 
 
-                public final expect inline operator fun compareTo(other: SignedInteger<*>): Int 
+                expect inline operator fun compareTo(other: SignedInteger<*>): Int 
 
-                public final expect inline operator fun compareTo(other: Byte): Int 
+                expect inline operator fun compareTo(other: Byte): Int 
 
-                public final expect inline operator fun compareTo(other: Long): Int 
+                expect inline operator fun compareTo(other: Long): Int 
 
-                public final expect inline operator fun compareTo(other: Short): Int 
+                expect inline operator fun compareTo(other: Short): Int 
 
-                public final expect inline operator fun compareTo(other: Int): Int 
+                expect inline operator fun compareTo(other: Int): Int 
 
-                public final external expect operator fun dec(): SELF 
+                expect external operator fun dec(): SELF 
 
-                public final expect inline operator fun div(other: Int): SignedInteger<*> 
+                expect inline operator fun div(other: Int): SignedInteger<*> 
 
-                public final expect inline operator fun div(other: Short): SignedInteger<*> 
+                expect inline operator fun div(other: Short): SignedInteger<*> 
 
-                public final expect inline operator fun div(other: Byte): SignedInteger<*> 
+                expect inline operator fun div(other: Byte): SignedInteger<*> 
 
-                public final expect inline operator fun div(other: SignedInteger<*>): SignedInteger<*> 
+                expect inline operator fun div(other: SignedInteger<*>): SignedInteger<*> 
 
-                public final expect inline operator fun div(other: Long): SignedInteger<*> 
+                expect inline operator fun div(other: Long): SignedInteger<*> 
 
-                public final external expect operator fun inc(): SELF 
+                expect external operator fun inc(): SELF 
 
-                public final external expect fun inv(): SELF 
+                expect external fun inv(): SELF 
 
-                public final expect inline operator fun minus(other: SignedInteger<*>): SignedInteger<*> 
+                expect inline operator fun minus(other: SignedInteger<*>): SignedInteger<*> 
 
-                public final expect inline operator fun minus(other: Byte): SignedInteger<*> 
+                expect inline operator fun minus(other: Byte): SignedInteger<*> 
 
-                public final expect inline operator fun minus(other: Short): SignedInteger<*> 
+                expect inline operator fun minus(other: Short): SignedInteger<*> 
 
-                public final expect inline operator fun minus(other: Long): SignedInteger<*> 
+                expect inline operator fun minus(other: Long): SignedInteger<*> 
 
-                public final expect inline operator fun minus(other: Int): SignedInteger<*> 
+                expect inline operator fun minus(other: Int): SignedInteger<*> 
 
-                public final external expect infix fun or(other: SELF): SELF 
+                expect external infix fun or(other: SELF): SELF 
 
-                public final expect inline operator fun plus(other: SignedInteger<*>): SignedInteger<*> 
+                expect inline operator fun plus(other: SignedInteger<*>): SignedInteger<*> 
 
-                public final expect inline operator fun plus(other: Long): SignedInteger<*> 
+                expect inline operator fun plus(other: Long): SignedInteger<*> 
 
-                public final expect inline operator fun plus(other: Short): SignedInteger<*> 
+                expect inline operator fun plus(other: Short): SignedInteger<*> 
 
-                public final expect inline operator fun plus(other: Byte): SignedInteger<*> 
+                expect inline operator fun plus(other: Byte): SignedInteger<*> 
 
-                public final expect inline operator fun plus(other: Int): SignedInteger<*> 
+                expect inline operator fun plus(other: Int): SignedInteger<*> 
 
-                public final expect inline operator fun rem(other: SignedInteger<*>): SignedInteger<*> 
+                expect inline operator fun rem(other: SignedInteger<*>): SignedInteger<*> 
 
-                public final expect inline operator fun rem(other: Int): SignedInteger<*> 
+                expect inline operator fun rem(other: Int): SignedInteger<*> 
 
-                public final expect inline operator fun rem(other: Long): SignedInteger<*> 
+                expect inline operator fun rem(other: Long): SignedInteger<*> 
 
-                public final expect inline operator fun rem(other: Byte): SignedInteger<*> 
+                expect inline operator fun rem(other: Byte): SignedInteger<*> 
 
-                public final expect inline operator fun rem(other: Short): SignedInteger<*> 
+                expect inline operator fun rem(other: Short): SignedInteger<*> 
 
-                public final external expect infix fun shl(bitCount: Int): SELF 
+                expect external infix fun shl(bitCount: Int): SELF 
 
-                public final external expect infix fun shr(bitCount: Int): SELF 
+                expect external infix fun shr(bitCount: Int): SELF 
 
-                public final expect inline operator fun times(other: Short): SignedInteger<*> 
+                expect inline operator fun times(other: Short): SignedInteger<*> 
 
-                public final expect inline operator fun times(other: SignedInteger<*>): SignedInteger<*> 
+                expect inline operator fun times(other: SignedInteger<*>): SignedInteger<*> 
 
-                public final expect inline operator fun times(other: Byte): SignedInteger<*> 
+                expect inline operator fun times(other: Byte): SignedInteger<*> 
 
-                public final expect inline operator fun times(other: Int): SignedInteger<*> 
+                expect inline operator fun times(other: Int): SignedInteger<*> 
 
-                public final expect inline operator fun times(other: Long): SignedInteger<*> 
+                expect inline operator fun times(other: Long): SignedInteger<*> 
 
-                public final expect inline fun toByte(): Byte 
+                expect inline fun toByte(): Byte 
 
-                public final expect inline fun toDouble(): Double 
+                expect inline fun toDouble(): Double 
 
-                public final expect inline fun toFloat(): Float 
+                expect inline fun toFloat(): Float 
 
-                public final expect inline fun toInt(): Int 
+                expect inline fun toInt(): Int 
 
-                public final expect inline fun toLong(): Long 
+                expect inline fun toLong(): Long 
 
-                public final expect inline fun toShort(): Short 
+                expect inline fun toShort(): Short 
 
-                public final expect inline fun toUByte(): UByte 
+                expect inline fun toUByte(): UByte 
 
-                public final expect inline fun toUInt(): UInt 
+                expect inline fun toUInt(): UInt 
 
-                public final expect inline fun toULong(): ULong 
+                expect inline fun toULong(): ULong 
 
-                public final expect inline fun toUShort(): UShort 
+                expect inline fun toUShort(): UShort 
 
-                public final external expect infix fun xor(other: SELF): SELF 
+                expect external infix fun xor(other: SELF): SELF 
             }
 
         """.trimIndent()
