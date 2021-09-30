@@ -74,6 +74,7 @@ internal object OptimisticNumbersTypeCommonizer : AssociativeCommonizer<CirClass
         return null
     }
 
+    @Suppress("UNUSED_PARAMETER") // TODO(kirpichenkov)
     fun isOptimisticallySubstitutable(classId: CirEntityId): Boolean {
         return false
     }
