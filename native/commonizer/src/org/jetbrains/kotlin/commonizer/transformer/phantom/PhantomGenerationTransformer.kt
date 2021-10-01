@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.commonizer.transformer.phantom
 
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
+import org.jetbrains.kotlin.commonizer.transformer.AbstractCirNodeTransformer
+import org.jetbrains.kotlin.commonizer.transformer.AbstractContextlessCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.CirNodeTransformer
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.Name
@@ -14,15 +16,13 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 internal class PhantomGenerationTransformer(
     private val storageManager: StorageManager,
-) : CirNodeTransformer {
+) : AbstractContextlessCirNodeTransformer() {
 
-    override fun invoke(root: CirRootNode) {
-        // TODO: For prototyping purposes only generate stuff for posix to not solve the issue with duplicated classifiers
-        root.modules[POSIX_MODULE_NAME]?.let { moduleNode ->
-            addMissingPackages(moduleNode)
+    override fun beforeModule(moduleNode: CirModuleNode, moduleName: CirName, context: Unit) {
+        if (moduleName != POSIX_MODULE_NAME) return
 
-            generateUniqueDeclarations(moduleNode)
-        }
+        addMissingPackages(moduleNode)
+        generateUniqueDeclarations(moduleNode)
     }
 
     private fun addMissingPackages(moduleNode: CirModuleNode) {

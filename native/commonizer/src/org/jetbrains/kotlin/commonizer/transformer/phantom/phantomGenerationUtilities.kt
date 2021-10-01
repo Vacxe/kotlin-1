@@ -64,10 +64,9 @@ internal fun createClassNode(
     id: CirEntityId,
     creatingFn: () -> CirClass,
     context: GenerationContext,
-//    supertypes: List<CirType> = emptyList(),
 ): CirClassNode {
     val commonWithoutSupertypes = creatingFn()
-    val platformWithSupertypes = creatingFn()/*.also { it.supertypes = supertypes }*/
+    val platformWithSupertypes = creatingFn()
     return CirClassNode(
         id,
         targetDeclarations = CommonizedGroup(context.groupSize) { platformWithSupertypes },

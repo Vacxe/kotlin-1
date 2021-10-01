@@ -383,7 +383,7 @@ internal fun varOfClass(context: GenerationContext, id: CirEntityId, boundId: Ci
 
     return GeneratedInterface(
         name,
-        createClassNode(id, creatingFn, context/*, supertypes*/),
+        createClassNode(id, creatingFn, context),
     )
 }
 

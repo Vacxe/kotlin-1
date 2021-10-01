@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer
+import org.jetbrains.kotlin.commonizer.transformer.CirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.InlineTypeAliasCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.phantom.PhantomGenerationTransformer
 import org.jetbrains.kotlin.commonizer.transformer.ReApproximationCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.ReApproximationCirNodeTransformer.SignatureBuildingContextProvider
+import org.jetbrains.kotlin.commonizer.transformer.phantom.PhantomIntegerSupertypeCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.tree.defaultCirTreeRootDeserializer
 import org.jetbrains.kotlin.commonizer.tree.mergeCirTree
@@ -60,25 +62,33 @@ internal fun commonizeTarget(
 
         val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees)
 
-        InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers).invoke(mergedTree)
-
-        ReApproximationCirNodeTransformer(
-            parameters.storageManager, classifiers,
-            SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = false)
-        ).invoke(mergedTree)
-
-        ReApproximationCirNodeTransformer(
-            parameters.storageManager, classifiers,
-            SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = true)
-        ).invoke(mergedTree)
-
-        PhantomGenerationTransformer(parameters.storageManager).invoke(mergedTree)
+        mergedTree.transform(parameters, classifiers)
 
         mergedTree.accept(CommonizationVisitor(mergedTree), Unit)
 
         return mergedTree
     }
 }
+
+private fun CirRootNode.transform(parameters: CommonizerParameters, classifiers: CirKnownClassifiers) {
+    createTransformers(parameters, classifiers).forEach { transformer ->
+        transformer(this)
+    }
+}
+
+private fun createTransformers(parameters: CommonizerParameters, classifiers: CirKnownClassifiers): List<CirNodeTransformer> = listOf(
+    PhantomIntegerSupertypeCirNodeTransformer(parameters.storageManager, classifiers),
+    InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers),
+    ReApproximationCirNodeTransformer(
+        parameters.storageManager, classifiers,
+        SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = false)
+    ),
+    ReApproximationCirNodeTransformer(
+        parameters.storageManager, classifiers,
+        SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = true)
+    ),
+    PhantomGenerationTransformer(parameters.storageManager),
+)
 
 internal fun serializeTarget(
     parameters: CommonizerParameters,

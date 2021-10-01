@@ -48,6 +48,25 @@ interface CirClass : CirClassifier, CirContainingClass, AnyClass {
             isInner = isInner,
             isExternal = isExternal
         )
+
+        // TODO: ensure doesn't break ArtificialAliasedCirClass
+        fun CirClass.replaceSupertypes(
+            supertypes: List<CirType>
+        ): CirClass = CirClassImpl(
+            annotations = annotations,
+            name = name,
+            typeParameters = typeParameters,
+            supertypes = supertypes,
+            visibility = visibility,
+            modality = modality,
+            kind = kind,
+            companion = companion,
+            isCompanion = isCompanion,
+            isData = isData,
+            isValue = isValue,
+            isInner = isInner,
+            isExternal = isExternal,
+        )
     }
 }
 

@@ -1,0 +1,223 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.commonizer.transformer.phantom
+
+import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.cir.CirClass.Companion.replaceSupertypes
+import org.jetbrains.kotlin.commonizer.cir.CirClassType.Companion.copyInterned
+import org.jetbrains.kotlin.commonizer.ilt.NumericCirEntityIds
+import org.jetbrains.kotlin.commonizer.ilt.asCirEntityId
+import org.jetbrains.kotlin.commonizer.mergedtree.*
+import org.jetbrains.kotlin.commonizer.transformer.*
+import org.jetbrains.kotlin.commonizer.transformer.ClassNodeIndex
+import org.jetbrains.kotlin.commonizer.transformer.toArtificialCirClass
+import org.jetbrains.kotlin.descriptors.konan.PHANTOM_SIGNED_INTEGER
+import org.jetbrains.kotlin.descriptors.konan.PHANTOM_SIGNED_VAR_OF
+import org.jetbrains.kotlin.descriptors.konan.PHANTOM_UNSIGNED_INTEGER
+import org.jetbrains.kotlin.descriptors.konan.PHANTOM_UNSIGNED_VAR_OF
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+class IntegerSupertypeTransformationContext {
+    lateinit var classNodeIndex: ClassNodeIndex
+    lateinit var packageNode: CirPackageNode
+}
+
+class PhantomIntegerSupertypeCirNodeTransformer(
+    private val storageManager: StorageManager,
+    private val classifiers: CirKnownClassifiers,
+) : AbstractCirNodeTransformer<IntegerSupertypeTransformationContext>() {
+    override fun newTransformationContext() = IntegerSupertypeTransformationContext()
+
+    override fun beforeModule(moduleNode: CirModuleNode, moduleName: CirName, context: IntegerSupertypeTransformationContext) {
+        context.classNodeIndex = ClassNodeIndex(moduleNode)
+    }
+
+    override fun beforePackage(packageNode: CirPackageNode, context: IntegerSupertypeTransformationContext) {
+        context.packageNode = packageNode
+    }
+
+    override fun transformTypeAlias(typeAliasNode: CirTypeAliasNode, context: IntegerSupertypeTransformationContext) {
+        val typeAliasClassNode = context.classNodeIndex[typeAliasNode.id]
+            ?: context.packageNode.createArtificialClassNode(typeAliasNode, storageManager, classifiers)
+        fillArtificialClassNode(typeAliasNode, typeAliasClassNode, context.classNodeIndex)
+    }
+
+    private fun fillArtificialClassNode(
+        typeAliasNode: CirTypeAliasNode,
+        artificialClassNode: CirClassNode,
+        classNodeIndex: ClassNodeIndex,
+    ) {
+        typeAliasNode.targetDeclarations.forEachIndexed { targetIndex, typeAlias ->
+            when {
+                typeAlias == null || artificialClassNode.targetDeclarations[targetIndex] != null -> return@forEachIndexed
+                typeAlias.expandedType.classifierId in NumericCirEntityIds.INTEGER_IDS ->
+                    addPhantomIntegerSupertype(typeAlias, artificialClassNode, typeAliasNode, targetIndex)
+                typeAlias.expandedType.classifierId in NumericCirEntityIds.INTEGER_VAR_IDS ->
+                    addPhantomIntegerVarSupertype(typeAlias, artificialClassNode, targetIndex)
+                else ->
+                    updatePhantomSupertypesIfPresent(typeAlias, artificialClassNode, classNodeIndex, targetIndex)
+            }
+        }
+    }
+
+    // Classes from a previous commonization might contain phantom supertype
+    // It has to be copied with new type argument into artificial class of an alias that expands into such a class
+    private fun updatePhantomSupertypesIfPresent(
+        typeAlias: CirTypeAlias,
+        artificialClassNode: CirClassNode,
+        classNodeIndex: ClassNodeIndex,
+        targetIndex: Int,
+    ) {
+        val cirClass = classNodeIndex[typeAlias.expandedType.classifierId]?.targetDeclarations?.get(targetIndex)
+            ?: return // looking for a commonized class with phantom supertype
+
+        @Suppress("UNUSED_VARIABLE")
+        val correctedSupertypes = cirClass.supertypes.map { supertype ->
+            if (supertype is CirClassType && supertype.classifierId in NumericCirEntityIds.PHANTOM_INTEGER_IDS) {
+                val newPhantomIntegerArg = CirRegularTypeProjection(
+                    Variance.INVARIANT,
+                    CirClassType.createInterned(
+                        classId = artificialClassNode.id,
+                        outerType = null,
+                        arguments = emptyList(),
+                        isMarkedNullable = false,
+                    )
+                )
+                supertype.copyInterned(
+                    arguments = SmartList(newPhantomIntegerArg)
+                )
+            } else supertype
+        }
+
+        // FIXME: leads to rewrites
+//        artificialClassNode.targetDeclarations[targetIndex] = cirClass.replaceSupertypes(correctedSupertypes)
+    }
+
+    private fun addPhantomIntegerSupertype(
+        typeAlias: CirTypeAlias,
+        artificialClassNode: CirClassNode,
+        typeAliasNode: CirTypeAliasNode,
+        targetIndex: Int
+    ) {
+        if (artificialClassNode.targetDeclarations[targetIndex] != null) return
+
+        artificialClassNode.targetDeclarations[targetIndex] = typeAlias.toArtificialCirClass(
+            TypeAliasToClassConversion.PhantomInteger(classifiers, targetIndex, typeAliasNode)
+        )
+    }
+
+    private fun addPhantomIntegerVarSupertype(
+        typeAlias: CirTypeAlias, artificialClassNode: CirClassNode, targetIndex: Int
+    ) {
+        if (artificialClassNode.targetDeclarations[targetIndex] != null) return
+
+        val integerParameterType = typeAlias.underlyingType.arguments.singleOrNull()?.safeAs<CirRegularTypeProjection>() ?: return
+        val typeAliasArgumentType = integerParameterType.type.safeAs<CirTypeAliasType>() ?: return
+
+        artificialClassNode.targetDeclarations[targetIndex] = typeAlias.toArtificialCirClass(
+            TypeAliasToClassConversion.PhantomVarOf(classifiers, targetIndex, typeAliasArgumentType)
+        )
+    }
+}
+
+internal class PhantomIntegerSupertypesResolver(
+    private val baseResolver: CirSupertypesResolver,
+    private val originalTypeAlias: CirTypeAliasNode,
+) : CirSupertypesResolver {
+    override fun supertypes(type: CirClassType): Set<CirClassType> {
+        return baseResolver.supertypes(type) + phantomIntegerSupertypesIfAny(type, originalTypeAlias.id)
+    }
+
+    private fun phantomIntegerSupertypesIfAny(typeAliasType: CirClassType, integerSupertypeArgumentId: CirEntityId): List<CirClassType> {
+        return when (typeAliasType.classifierId) {
+            in NumericCirEntityIds.SIGNED_INTEGER_IDS -> SmartList(
+                phantomIntegerSupertype(
+                    PHANTOM_SIGNED_INTEGER.asCirEntityId(),
+                    integerSupertypeArgumentId,
+                )
+            )
+            in NumericCirEntityIds.UNSIGNED_INTEGER_IDS -> SmartList(
+                phantomIntegerSupertype(
+                    PHANTOM_UNSIGNED_INTEGER.asCirEntityId(),
+                    integerSupertypeArgumentId,
+                )
+            )
+            else -> emptyList()
+        }
+    }
+
+    private fun phantomIntegerSupertype(phantomIntegerId: CirEntityId, argumentId: CirEntityId): CirClassType =
+        CirClassType.createInterned(
+            classId = phantomIntegerId,
+            outerType = null,
+            arguments = SmartList(
+                CirRegularTypeProjection(
+                    projectionKind = Variance.INVARIANT,
+                    type = CirClassType.createInterned(
+                        classId = argumentId,
+                        outerType = null,
+                        arguments = emptyList(),
+                        isMarkedNullable = false,
+                    )
+                )
+            ),
+            isMarkedNullable = false,
+        )
+}
+
+internal class PhantomVarOfSupertypeResolver(
+    private val baseResolver: CirSupertypesResolver,
+    private val typeAliasArgumentType: CirTypeAliasType,
+) : CirSupertypesResolver {
+    override fun supertypes(type: CirClassType): Set<CirClassType> =
+        baseResolver.supertypes(type) + phantomIntegerVariableSupertypesIfAny(type)
+
+    private fun phantomIntegerVariableSupertypesIfAny(
+        typeAliasType: CirClassType
+    ): List<CirClassType> = when (typeAliasType.classifierId) {
+        in NumericCirEntityIds.UNSIGNED_VAR_IDS -> SmartList(
+            phantomVarOfSupertype(
+                PHANTOM_UNSIGNED_VAR_OF.asCirEntityId(),
+                typeAliasArgumentType.classifierId,
+            )
+        )
+        in NumericCirEntityIds.SIGNED_VAR_IDS -> SmartList(
+            phantomVarOfSupertype(
+                PHANTOM_SIGNED_VAR_OF.asCirEntityId(),
+                typeAliasArgumentType.classifierId,
+            )
+        )
+        else -> emptyList()
+    }
+
+    private fun phantomVarOfSupertype(varOfId: CirEntityId, integerSupertypeArgumentId: CirEntityId): CirClassType =
+        CirClassType.createInterned(
+            classId = varOfId,
+            outerType = null,
+            arguments = SmartList(
+                CirRegularTypeProjection(
+                    projectionKind = Variance.INVARIANT,
+                    type = CirClassType.createInterned(
+                        classId = integerSupertypeArgumentId,
+                        outerType = null,
+                        arguments = emptyList(),
+                        isMarkedNullable = false,
+                    )
+                )
+            ),
+            isMarkedNullable = false,
+        )
+}
+
+
+internal fun CirSupertypesResolver.withPhantomIntegerSupertypes(typeAliasNode: CirTypeAliasNode): CirSupertypesResolver =
+    PhantomIntegerSupertypesResolver(this, typeAliasNode)
+
+internal fun CirSupertypesResolver.withPhantomVarOfSupertypes(typeAliasArgumentType: CirTypeAliasType): CirSupertypesResolver =
+    PhantomVarOfSupertypeResolver(this, typeAliasArgumentType)
