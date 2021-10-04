@@ -206,6 +206,101 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             )
         }
     }
+
+    fun `test two levels of type aliases in phantom supertypes`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(a, b, c)")
+
+            "a" withSource """
+                typealias Inner = Int
+                typealias Outer = Inner
+            """.trimIndent()
+
+            "b" withSource """
+                typealias Inner = Long
+                typealias Outer = Inner
+            """.trimIndent()
+
+            "c" withSource """
+                typealias Different = Long
+                typealias Outer = Different
+            """.trimIndent()
+        }
+
+        result.assertCommonized("(a, b)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class Inner : Number(), SignedInteger<Inner>
+                typealias Outer = Inner
+            """.trimIndent()
+            )
+        }
+
+        result.assertCommonized("(a, b, c)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class Outer : Number(), SignedInteger<Outer>
+            """.trimIndent()
+            )
+        }
+    }
+
+    fun `test no leaf numbers after first commonization for type alias chain`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
+
+            "a" withSource """
+                typealias Inner = Int
+                typealias Outer = Inner
+            """.trimIndent()
+
+            "b" withSource """
+                typealias Inner = Long
+                typealias Outer = Inner
+            """.trimIndent()
+
+            "c" withSource """
+                typealias Different = Byte
+                typealias Outer = Different
+            """.trimIndent()
+
+            "d" withSource """
+                typealias Different = Short
+                typealias Outer = Different
+            """.trimIndent()
+        }
+
+        result.assertCommonized("(a, b)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class Inner : Number(), SignedInteger<Inner>
+                typealias Outer = Inner
+            """.trimIndent()
+            )
+        }
+
+        result.assertCommonized("(c, d)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class Different : Number(), SignedInteger<Different>
+                typealias Outer = Different
+            """.trimIndent()
+            )
+        }
+
+        result.assertCommonized("(a, b, c, d)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class Outer : Number(), SignedInteger<Outer>
+            """.trimIndent()
+            )
+        }
+    }
 }
 
 private fun InlineSourceBuilder.ModuleBuilder.generatedPhantoms() {

@@ -45,13 +45,12 @@ internal class PhantomIntegerSupertypeCirNodeTransformer(
     override fun transformTypeAlias(typeAliasNode: CirTypeAliasNode, context: IntegerSupertypeTransformationContext) {
         val typeAliasClassNode = context.classNodeIndex[typeAliasNode.id]
             ?: context.packageNode.createArtificialClassNode(typeAliasNode, storageManager, classifiers)
-        fillArtificialClassNode(typeAliasNode, typeAliasClassNode, context.classNodeIndex)
+        fillArtificialClassNode(typeAliasNode, typeAliasClassNode)
     }
 
     private fun fillArtificialClassNode(
         typeAliasNode: CirTypeAliasNode,
         artificialClassNode: CirClassNode,
-        classNodeIndex: ClassNodeIndex,
     ) {
         typeAliasNode.targetDeclarations.forEachIndexed { targetIndex, typeAlias ->
             when {
@@ -60,43 +59,8 @@ internal class PhantomIntegerSupertypeCirNodeTransformer(
                     addPhantomIntegerSupertype(typeAlias, artificialClassNode, typeAliasNode, targetIndex)
                 typeAlias.expandedType.classifierId in NumericCirEntityIds.INTEGER_VAR_IDS ->
                     addPhantomIntegerVarSupertype(typeAlias, artificialClassNode, targetIndex)
-                else ->
-                    updatePhantomSupertypesIfPresent(typeAlias, artificialClassNode, classNodeIndex, targetIndex)
             }
         }
-    }
-
-    // Classes from a previous commonization might contain phantom supertype
-    // It has to be copied with new type argument into artificial class of an alias that expands into such a class
-    private fun updatePhantomSupertypesIfPresent(
-        typeAlias: CirTypeAlias,
-        artificialClassNode: CirClassNode,
-        classNodeIndex: ClassNodeIndex,
-        targetIndex: Int,
-    ) {
-        val cirClass = classNodeIndex[typeAlias.expandedType.classifierId]?.targetDeclarations?.get(targetIndex)
-            ?: return // looking for a commonized class with phantom supertype
-
-        @Suppress("UNUSED_VARIABLE")
-        val correctedSupertypes = cirClass.supertypes.map { supertype ->
-            if (supertype is CirClassType && supertype.classifierId in NumericCirEntityIds.PHANTOM_INTEGER_IDS) {
-                val newPhantomIntegerArg = CirRegularTypeProjection(
-                    Variance.INVARIANT,
-                    CirClassType.createInterned(
-                        classId = artificialClassNode.id,
-                        outerType = null,
-                        arguments = emptyList(),
-                        isMarkedNullable = false,
-                    )
-                )
-                supertype.copyInterned(
-                    arguments = SmartList(newPhantomIntegerArg)
-                )
-            } else supertype
-        }
-
-        // FIXME: leads to rewrites
-//        artificialClassNode.targetDeclarations[targetIndex] = cirClass.replaceSupertypes(correctedSupertypes)
     }
 
     private fun addPhantomIntegerSupertype(
