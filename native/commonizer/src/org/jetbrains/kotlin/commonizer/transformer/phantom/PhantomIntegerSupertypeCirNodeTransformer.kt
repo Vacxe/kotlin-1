@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class IntegerSupertypeTransformationContext {
+internal class IntegerSupertypeTransformationContext {
     lateinit var classNodeIndex: ClassNodeIndex
     lateinit var packageNode: CirPackageNode
 }
 
-class PhantomIntegerSupertypeCirNodeTransformer(
+internal class PhantomIntegerSupertypeCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
 ) : AbstractCirNodeTransformer<IntegerSupertypeTransformationContext>() {
@@ -214,7 +214,6 @@ internal class PhantomVarOfSupertypeResolver(
             isMarkedNullable = false,
         )
 }
-
 
 internal fun CirSupertypesResolver.withPhantomIntegerSupertypes(typeAliasNode: CirTypeAliasNode): CirSupertypesResolver =
     PhantomIntegerSupertypesResolver(this, typeAliasNode)

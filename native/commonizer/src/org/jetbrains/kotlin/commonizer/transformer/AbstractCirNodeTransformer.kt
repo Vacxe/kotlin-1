@@ -56,6 +56,7 @@ abstract class AbstractCirNodeTransformer<D : Any> : CirNodeTransformer {
         transformConstructor(constructorNode, context)
     }
 
+    // TODO: review when the dust settles
     open fun beforeModule(moduleNode: CirModuleNode, moduleName: CirName, context: D) {}
     open fun afterModule(moduleNode: CirModuleNode, moduleName: CirName, context: D) {}
     open fun beforePackage(packageNode: CirPackageNode, context: D) {}

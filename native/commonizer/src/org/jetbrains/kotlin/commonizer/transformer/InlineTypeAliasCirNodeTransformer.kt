@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
 import org.jetbrains.kotlin.storage.StorageManager
 
+// TODO: purge mutability
 internal class InlineTypeAliasTransformerContext {
     lateinit var classNodeIndex: ClassNodeIndex
     lateinit var packageNode: CirPackageNode

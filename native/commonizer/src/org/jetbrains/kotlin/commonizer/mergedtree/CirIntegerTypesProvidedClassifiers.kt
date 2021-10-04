@@ -22,7 +22,6 @@ object CirIntegerTypesProvidedClassifiers : CirProvidedClassifiers {
             else -> null
         }
 
-    // TODO now: check correctness
     override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId> = emptyList()
 
     private val fakeClassifier = CirProvided.RegularClass(

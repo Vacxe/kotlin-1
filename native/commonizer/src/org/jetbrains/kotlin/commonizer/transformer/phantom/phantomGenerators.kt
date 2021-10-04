@@ -20,7 +20,7 @@ internal val UNSIGNED_INTEGER_ID = PHANTOM_UNSIGNED_INTEGER.asCirEntityId()
 internal val SIGNED_VAR_OF_ID = PHANTOM_SIGNED_VAR_OF.asCirEntityId()
 internal val UNSIGNED_VAR_OF_ID = PHANTOM_UNSIGNED_VAR_OF.asCirEntityId()
 
-internal fun convertExtensionFunction(generationContext: GenerationContext, receiverType: CirEntityId): GeneratedFunction {
+internal fun createConvertExtensionFunction(generationContext: GenerationContext, receiverType: CirEntityId): GeneratedFunction {
     val typeParameter = CirTypeParameter(
         annotations = emptyList(),
         name = CirName.create("R"),

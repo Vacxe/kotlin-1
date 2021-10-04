@@ -23,6 +23,7 @@ internal fun ClassNodeIndex(module: CirModuleNode): ClassNodeIndex = module.pack
     .flatMap { pkg -> pkg.classes.values }
     .associateBy { clazz -> clazz.id }
 
+// TODO: rethink naming
 sealed class TypeAliasToClassConversion(
     val classifiers: CirKnownClassifiers,
     val targetIndex: Int,
@@ -75,6 +76,7 @@ internal fun CirTypeAlias.toArtificialCirClass(
         companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false
     )
 
+// TODO: divide
 private fun CirTypeAlias.resolveSupertypes(conversion: TypeAliasToClassConversion): List<CirType> = with(conversion) {
     if (expandedType.isMarkedNullable) return emptyList()
     val resolver = SimpleCirSupertypesResolver(

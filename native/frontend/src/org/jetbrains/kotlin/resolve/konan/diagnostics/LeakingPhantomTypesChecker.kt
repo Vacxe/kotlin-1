@@ -58,9 +58,9 @@ object LeakingPhantomTypesChecker {
             declaration: KtCallableDeclaration,
             context: DeclarationCheckerContext,
         ) {
-            for ((ix, valueParameter) in descriptor.valueParameters.withIndex()) {
+            for ((index, valueParameter) in descriptor.valueParameters.withIndex()) {
                 valueParameter.type.findPhantom()?.let { phantomType ->
-                    declaration.valueParameterList?.parameters?.get(ix)?.let { parameter ->
+                    declaration.valueParameterList?.parameters?.get(index)?.let { parameter ->
                         report(parameter, phantomType, context.trace)
                     }
                 }
@@ -96,11 +96,11 @@ object LeakingPhantomTypesChecker {
             ktTypeParameterList: KtTypeParameterList,
             context: DeclarationCheckerContext,
         ) {
-            for ((ix, typeParameterDescriptor) in typeParameterList.withIndex()) {
+            for ((index, typeParameterDescriptor) in typeParameterList.withIndex()) {
                 typeParameterDescriptor.upperBounds.firstNotNullOfOrNull { upperBound ->
                     upperBound?.findPhantom()
                 }?.let { phantomType ->
-                    ktTypeParameterList.parameters[ix]?.let { ktTypeParameter ->
+                    ktTypeParameterList.parameters[index]?.let { ktTypeParameter ->
                         context.trace.report(LEAKING_PHANTOM_TYPE_IN_TYPE_PARAMETERS.on(ktTypeParameter, phantomType))
                     }
                 }

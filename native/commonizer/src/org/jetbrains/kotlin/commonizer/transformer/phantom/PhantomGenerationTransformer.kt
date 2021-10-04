@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.commonizer.transformer.phantom
 
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
-import org.jetbrains.kotlin.commonizer.transformer.AbstractCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.AbstractContextlessCirNodeTransformer
-import org.jetbrains.kotlin.commonizer.transformer.CirNodeTransformer
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
@@ -56,13 +54,14 @@ internal class PhantomGenerationTransformer(
         private val KOTLIN_PACKAGE_NAME = CirPackageName.create("kotlin")
         private val POSIX_MODULE_NAME = CirName.create(Name.special("<org.jetbrains.kotlin.native.platform.posix>"))
 
+        // TODO: simplify if CIR generation will survive
         private val UNIQUE_DECLARATIONS = listOf<Pair<CirPackageName, (GenerationContext) -> Generated>>(
             KOTLIN_PACKAGE_NAME to { context -> generalizedIntegerInterface(context, SIGNED_INTEGER_ID) },
             KOTLIN_PACKAGE_NAME to { context -> generalizedIntegerInterface(context, UNSIGNED_INTEGER_ID) },
             CINTEROP_PACKAGE_NAME to { context -> varOfClass(context, SIGNED_VAR_OF_ID, SIGNED_INTEGER_ID) },
             CINTEROP_PACKAGE_NAME to { context -> varOfClass(context, UNSIGNED_VAR_OF_ID, UNSIGNED_INTEGER_ID) },
-            CINTEROP_PACKAGE_NAME to { context -> convertExtensionFunction(context, SIGNED_INTEGER_ID) },
-            CINTEROP_PACKAGE_NAME to { context -> convertExtensionFunction(context, UNSIGNED_INTEGER_ID) },
+            CINTEROP_PACKAGE_NAME to { context -> createConvertExtensionFunction(context, SIGNED_INTEGER_ID) },
+            CINTEROP_PACKAGE_NAME to { context -> createConvertExtensionFunction(context, UNSIGNED_INTEGER_ID) },
             CINTEROP_PACKAGE_NAME to { context -> valueExtensionProperty(context, UNSIGNED_INTEGER_ID, UNSIGNED_VAR_OF_ID) },
             CINTEROP_PACKAGE_NAME to { context -> valueExtensionProperty(context, SIGNED_INTEGER_ID, SIGNED_VAR_OF_ID) },
         )
