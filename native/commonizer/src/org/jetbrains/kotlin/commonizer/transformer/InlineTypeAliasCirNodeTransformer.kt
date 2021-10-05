@@ -26,7 +26,7 @@ internal class InlineTypeAliasCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
 ) : AbstractCirNodeTransformer<TypeAliasTransformationContext>() {
-    override fun newTransformationContext() = TypeAliasTransformationContext.Empty
+    override fun newTransformationContext(root: CirRootNode) = TypeAliasTransformationContext.Empty
 
     override fun beforeModule(
         moduleNode: CirModuleNode,
@@ -44,8 +44,6 @@ internal class InlineTypeAliasCirNodeTransformer(
         val targetClassNode = classNodeIndex[typeAliasNode.id]
             ?: packageNode.createArtificialClassNode(typeAliasNode, storageManager, classifiers)
         inlineTypeAliasIfPossible(classNodeIndex, typeAliasNode, targetClassNode)
-
-        context
     }
 
     private fun inlineTypeAliasIfPossible(classes: ClassNodeIndex, fromTypeAliasNode: CirTypeAliasNode, intoClassNode: CirClassNode) {

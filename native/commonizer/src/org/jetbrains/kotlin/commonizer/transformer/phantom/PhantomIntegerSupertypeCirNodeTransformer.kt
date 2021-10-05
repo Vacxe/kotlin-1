@@ -23,7 +23,7 @@ internal class PhantomIntegerSupertypeCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
 ) : AbstractCirNodeTransformer<TypeAliasTransformationContext>() {
-    override fun newTransformationContext() = TypeAliasTransformationContext.Empty
+    override fun newTransformationContext(root: CirRootNode) = TypeAliasTransformationContext.Empty
 
     override fun beforeModule(
         moduleNode: CirModuleNode,
@@ -37,12 +37,11 @@ internal class PhantomIntegerSupertypeCirNodeTransformer(
     override fun transformTypeAlias(
         typeAliasNode: CirTypeAliasNode,
         context: TypeAliasTransformationContext
-    ): TypeAliasTransformationContext {
+    ) {
         require(context.packageNode != null) { "Package node is empty during type alias transformation" }
         val typeAliasClassNode = context.classNodeIndex[typeAliasNode.id]
             ?: context.packageNode.createArtificialClassNode(typeAliasNode, storageManager, classifiers)
         fillArtificialClassNode(typeAliasNode, typeAliasClassNode)
-        return context
     }
 
     private fun fillArtificialClassNode(

@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.commonizer.transformer
 
+import org.jetbrains.kotlin.commonizer.cir.CirDeclaration
 import org.jetbrains.kotlin.commonizer.cir.CirHasTypeParameters
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
 import org.jetbrains.kotlin.commonizer.mergedtree.ClassifierSignatureBuildingContext.TypeAliasInvariant
-import org.jetbrains.kotlin.commonizer.utils.fastForEach
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal class ReApproximationCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
     private val signatureBuildingContextProvider: SignatureBuildingContextProvider
-) : CirNodeTransformer {
+) : AbstractCirNodeTransformer<ReApproximationCirNodeTransformer.TransformationContext>() {
 
     internal class SignatureBuildingContextProvider(
         private val classifiers: CirKnownClassifiers,
@@ -34,82 +34,101 @@ internal class ReApproximationCirNodeTransformer(
         }
     }
 
-    override fun invoke(root: CirRootNode) {
-        for (index in 0 until root.targetDeclarations.size) {
-            root.modules.forEach { (_, module) -> this(module, index) }
-        }
+    internal data class TransformationContext(
+        val parent: CirNodeWithMembers<*, *>?,
+        val memberContextClasses: ArrayDeque<CirClassNode>,
+    )
+
+    override fun newTransformationContext(root: CirRootNode): TransformationContext =
+        TransformationContext(parent = null, memberContextClasses = ArrayDeque())
+
+    override fun beforePackage(packageNode: CirPackageNode, context: TransformationContext): TransformationContext {
+        require(context.memberContextClasses.isEmpty()) { "Non-empty member context classes before package" }
+        return context.copy(parent = packageNode)
     }
 
-    private operator fun invoke(module: CirModuleNode, index: Int) {
-        module.packages.forEach { (_, pkg) -> this(pkg, index) }
+    override fun afterPackage(packageNode: CirPackageNode, context: TransformationContext) {
+        require(context.memberContextClasses.isEmpty()) { "Non-empty member context classes after package" }
     }
 
-    private operator fun invoke(pkg: CirPackageNode, index: Int) {
-        pkg.functions.values.toTypedArray().fastForEach { function -> this(pkg, function, index, CirMemberContext.empty) }
-        pkg.properties.values.toTypedArray().fastForEach { property -> this(pkg, property, index, CirMemberContext.empty) }
-        pkg.classes.values.toTypedArray().fastForEach { clazz -> this(clazz, index, CirMemberContext.empty) }
+    override fun beforeClass(classNode: CirClassNode, context: TransformationContext): TransformationContext {
+        context.memberContextClasses.addFirst(classNode)
+        return context.copy(parent = classNode)
     }
 
-    private operator fun invoke(clazz: CirClassNode, index: Int, context: CirMemberContext) {
-        val contextWithClass = context.withContextOf(clazz.targetDeclarations[index] ?: return)
-        clazz.functions.values.toTypedArray().fastForEach { function -> this(clazz, function, index, contextWithClass) }
-        clazz.properties.values.toTypedArray().fastForEach { property -> this(clazz, property, index, contextWithClass) }
-        clazz.constructors.values.toTypedArray().fastForEach { constructor -> this(clazz, constructor, index, contextWithClass) }
-        clazz.classes.values.toTypedArray().fastForEach { innerClass -> this(innerClass, index, contextWithClass) }
+    override fun afterClass(classNode: CirClassNode, context: TransformationContext) {
+        context.memberContextClasses.removeFirst()
     }
 
-    private operator fun invoke(parent: CirNodeWithMembers<*, *>, function: CirFunctionNode, index: Int, context: CirMemberContext) {
-        /* Only perform re-approximation to nodes that are not 'complete' */
-        if (function.targetDeclarations.none { it == null }) return
-        val functionAtIndex = function.targetDeclarations[index] ?: return
-
-        val approximationKey = FunctionApproximationKey.create(functionAtIndex, signatureBuildingContextProvider(context, functionAtIndex))
-        val newNode = parent.functions.getOrPut(approximationKey) {
-            buildFunctionNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
-        }
-
-        // Move declaration
-        if (newNode.targetDeclarations[index] == null) {
-            function.targetDeclarations[index] = null
-            newNode.targetDeclarations[index] = functionAtIndex
-        }
+    override fun transformFunction(functionNode: CirFunctionNode, context: TransformationContext) {
+        reApproximateNode(
+            functionNode, context,
+            approximationKeyBuilder = { cirFunction, memberContext ->
+                FunctionApproximationKey.create(cirFunction, signatureBuildingContextProvider(memberContext, cirFunction))
+            },
+            freshNodeBuilder = ::buildFunctionNode,
+            parentNodeMembers = { functions }
+        )
     }
 
-    private operator fun invoke(parent: CirNodeWithMembers<*, *>, property: CirPropertyNode, index: Int, context: CirMemberContext) {
-        /* Only perform re-approximation to nodes that are not 'complete' */
-        if (property.targetDeclarations.none { it == null }) return
-        val propertyAtIndex = property.targetDeclarations[index] ?: return
-
-        val approximationKey = PropertyApproximationKey.create(propertyAtIndex, signatureBuildingContextProvider(context, propertyAtIndex))
-        val newNode = parent.properties.getOrPut(approximationKey) {
-            buildPropertyNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
-        }
-
-        // Move declaration
-        if (newNode.targetDeclarations[index] == null) {
-            property.targetDeclarations[index] = null
-            newNode.targetDeclarations[index] = propertyAtIndex
-        }
+    override fun transformProperty(propertyNode: CirPropertyNode, context: TransformationContext) {
+        reApproximateNode(
+            propertyNode, context,
+            approximationKeyBuilder = { cirProperty, memberContext ->
+                PropertyApproximationKey.create(cirProperty, signatureBuildingContextProvider(memberContext, cirProperty))
+            },
+            freshNodeBuilder = ::buildPropertyNode,
+            parentNodeMembers = { properties }
+        )
     }
 
-    private operator fun invoke(
-        parent: CirClassNode, constructor: CirClassConstructorNode, index: Int, context: CirMemberContext
+    override fun transformConstructor(constructorNode: CirClassConstructorNode, context: TransformationContext) {
+        reApproximateNode(
+            constructorNode, context,
+            approximationKeyBuilder = { cirConstructor, memberContext ->
+                ConstructorApproximationKey.create(cirConstructor, signatureBuildingContextProvider(memberContext, cirConstructor))
+            },
+            freshNodeBuilder = ::buildClassConstructorNode,
+            parentNodeMembers = {
+                require(this is CirClassNode) { "Transform constructor called outside of class node" }
+                constructors
+            }
+        )
+    }
+
+    private fun <K, D : CirDeclaration, N : CirNode<D, D>> reApproximateNode(
+        oldNode: N,
+        transformationContext: TransformationContext,
+        approximationKeyBuilder: (D, CirMemberContext) -> K,
+        freshNodeBuilder: (StorageManager, size: Int, CirKnownClassifiers, CirNodeRelationship?) -> N,
+        parentNodeMembers: CirNodeWithMembers<*, *>.() -> MutableMap<K, N>,
     ) {
+        require(transformationContext.parent != null) { "Member owner is absent" }
         /* Only perform re-approximation to nodes that are not 'complete' */
-        if (constructor.targetDeclarations.none { it == null }) return
-        val constructorAtIndex = constructor.targetDeclarations[index] ?: return
+        if (oldNode.targetDeclarations.none { it == null }) return
 
-        val approximationKey =
-            ConstructorApproximationKey.create(constructorAtIndex, signatureBuildingContextProvider(context, constructorAtIndex))
+        oldNode.targetDeclarations.indices.forEach { index ->
+            val memberAtIndex = oldNode.targetDeclarations[index] ?: return@forEach
 
-        val newNode = parent.constructors.getOrPut(approximationKey) {
-            buildClassConstructorNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
-        }
+            val memberContext = transformationContext.memberContextClasses.fold(CirMemberContext.empty) { outerContext, cirClassNode ->
+                outerContext.withContextOf(cirClassNode.targetDeclarations[index] ?: return@forEach)
+            }
 
-        // Move declaration
-        if (newNode.targetDeclarations[index] == null) {
-            constructor.targetDeclarations[index] = null
-            newNode.targetDeclarations[index] = constructorAtIndex
+            val approximationKey = approximationKeyBuilder(memberAtIndex, memberContext)
+            val newNode = transformationContext.parent.parentNodeMembers().getOrPut(approximationKey) {
+                freshNodeBuilder(
+                    storageManager,
+                    transformationContext.parent.targetDeclarations.size,
+                    classifiers,
+                    ParentNode(transformationContext.parent)
+                )
+            }
+
+            // Move declaration
+            if (newNode.targetDeclarations[index] == null) {
+                oldNode.targetDeclarations[index] = null
+                newNode.targetDeclarations[index] = memberAtIndex
+            }
         }
     }
 }
