@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.commonizer.transformer.phantom
 
 import org.jetbrains.kotlin.commonizer.cir.*
-import org.jetbrains.kotlin.commonizer.cir.CirClass.Companion.replaceSupertypes
-import org.jetbrains.kotlin.commonizer.cir.CirClassType.Companion.copyInterned
 import org.jetbrains.kotlin.commonizer.ilt.NumericCirEntityIds
 import org.jetbrains.kotlin.commonizer.ilt.asCirEntityId
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.transformer.*
-import org.jetbrains.kotlin.commonizer.transformer.ClassNodeIndex
-import org.jetbrains.kotlin.commonizer.transformer.toArtificialCirClass
 import org.jetbrains.kotlin.descriptors.konan.PHANTOM_SIGNED_INTEGER
 import org.jetbrains.kotlin.descriptors.konan.PHANTOM_SIGNED_VAR_OF
 import org.jetbrains.kotlin.descriptors.konan.PHANTOM_UNSIGNED_INTEGER
@@ -23,29 +19,30 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-internal class IntegerSupertypeTransformationContext {
-    lateinit var classNodeIndex: ClassNodeIndex
-    lateinit var packageNode: CirPackageNode
-}
-
 internal class PhantomIntegerSupertypeCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
-) : AbstractCirNodeTransformer<IntegerSupertypeTransformationContext>() {
-    override fun newTransformationContext() = IntegerSupertypeTransformationContext()
+) : AbstractCirNodeTransformer<TypeAliasTransformationContext>() {
+    override fun newTransformationContext() = TypeAliasTransformationContext.Empty
 
-    override fun beforeModule(moduleNode: CirModuleNode, moduleName: CirName, context: IntegerSupertypeTransformationContext) {
-        context.classNodeIndex = ClassNodeIndex(moduleNode)
-    }
+    override fun beforeModule(
+        moduleNode: CirModuleNode,
+        moduleName: CirName,
+        context: TypeAliasTransformationContext,
+    ): TypeAliasTransformationContext = context.copy(classNodeIndex = ClassNodeIndex(moduleNode))
 
-    override fun beforePackage(packageNode: CirPackageNode, context: IntegerSupertypeTransformationContext) {
-        context.packageNode = packageNode
-    }
+    override fun beforePackage(packageNode: CirPackageNode, context: TypeAliasTransformationContext): TypeAliasTransformationContext =
+        context.copy(packageNode = packageNode)
 
-    override fun transformTypeAlias(typeAliasNode: CirTypeAliasNode, context: IntegerSupertypeTransformationContext) {
+    override fun transformTypeAlias(
+        typeAliasNode: CirTypeAliasNode,
+        context: TypeAliasTransformationContext
+    ): TypeAliasTransformationContext {
+        require(context.packageNode != null) { "Package node is empty during type alias transformation" }
         val typeAliasClassNode = context.classNodeIndex[typeAliasNode.id]
             ?: context.packageNode.createArtificialClassNode(typeAliasNode, storageManager, classifiers)
         fillArtificialClassNode(typeAliasNode, typeAliasClassNode)
+        return context
     }
 
     private fun fillArtificialClassNode(

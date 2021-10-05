@@ -10,30 +10,42 @@ import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
 import org.jetbrains.kotlin.storage.StorageManager
 
-// TODO: purge mutability
-internal class InlineTypeAliasTransformerContext {
-    lateinit var classNodeIndex: ClassNodeIndex
-    lateinit var packageNode: CirPackageNode
+internal data class TypeAliasTransformationContext(
+    val classNodeIndex: ClassNodeIndex,
+    val packageNode: CirPackageNode?,
+) {
+    companion object {
+        val Empty = TypeAliasTransformationContext(
+            classNodeIndex = emptyMap(),
+            packageNode = null,
+        )
+    }
 }
 
 internal class InlineTypeAliasCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
-) : AbstractCirNodeTransformer<InlineTypeAliasTransformerContext>() {
-    override fun newTransformationContext() = InlineTypeAliasTransformerContext()
+) : AbstractCirNodeTransformer<TypeAliasTransformationContext>() {
+    override fun newTransformationContext() = TypeAliasTransformationContext.Empty
 
-    override fun beforeModule(moduleNode: CirModuleNode, moduleName: CirName, context: InlineTypeAliasTransformerContext) {
-        context.classNodeIndex = ClassNodeIndex(moduleNode)
-    }
+    override fun beforeModule(
+        moduleNode: CirModuleNode,
+        moduleName: CirName,
+        context: TypeAliasTransformationContext,
+    ): TypeAliasTransformationContext =
+        context.copy(classNodeIndex = ClassNodeIndex(moduleNode))
 
-    override fun beforePackage(packageNode: CirPackageNode, context: InlineTypeAliasTransformerContext) {
-        context.packageNode = packageNode
-    }
+    override fun beforePackage(packageNode: CirPackageNode, context: TypeAliasTransformationContext): TypeAliasTransformationContext =
+        context.copy(packageNode = packageNode)
 
-    override fun transformTypeAlias(typeAliasNode: CirTypeAliasNode, context: InlineTypeAliasTransformerContext) = with(context) {
+    override fun transformTypeAlias(typeAliasNode: CirTypeAliasNode, context: TypeAliasTransformationContext) = with(context) {
+        require(packageNode != null) { "Package node is empty during type alias transformation" }
+
         val targetClassNode = classNodeIndex[typeAliasNode.id]
             ?: packageNode.createArtificialClassNode(typeAliasNode, storageManager, classifiers)
         inlineTypeAliasIfPossible(classNodeIndex, typeAliasNode, targetClassNode)
+
+        context
     }
 
     private fun inlineTypeAliasIfPossible(classes: ClassNodeIndex, fromTypeAliasNode: CirTypeAliasNode, intoClassNode: CirClassNode) {
