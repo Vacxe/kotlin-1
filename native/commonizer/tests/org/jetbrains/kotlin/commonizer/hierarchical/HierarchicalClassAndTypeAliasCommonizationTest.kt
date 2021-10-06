@@ -524,9 +524,6 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
     fun `test typealias to numbers`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
-            registerDependency("(a, b)", "(c, d)", "(a, b, c, d)") {
-                unsafeNumberAnnotationSource()
-            }
 
             simpleSingleSourceTarget(
                 "a", """
@@ -569,25 +566,27 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             """.trimIndent()
         )
 
-        result.assertCommonized(
-            "(c, d)", """
-                @UnsafeNumber(["c: kotlin.Int", "d: kotlin.Short"])
-                typealias Proxy = Short
-                @UnsafeNumber(["c: kotlin.Int", "d: kotlin.Short"])
+        result.assertCommonized("(c, d)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class Proxy : Number(), SignedInteger<Proxy>
                 typealias X = Proxy
                 expect val x: X
             """.trimIndent()
-        )
+            )
+        }
 
-        result.assertCommonized(
-            "(a, b, c, d)", """
-                @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Long", "c: kotlin.Int", "d: kotlin.Short"])
-                typealias Proxy = Short
-                @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Long", "c: kotlin.Int", "d: kotlin.Short"])
+        result.assertCommonized("(a, b, c, d)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class Proxy : Number(), SignedInteger<Proxy>
                 typealias X = Proxy
                 expect val x: X
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test supertypes being retained`() {

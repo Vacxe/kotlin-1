@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 import org.jetbrains.kotlin.commonizer.utils.InlineSourceBuilder
 import org.jetbrains.kotlin.commonizer.withAllLeaves
 
-class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
+class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
 
     fun `test Byte and Byte - typealias`() {
         val result = commonize {
@@ -39,12 +39,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Byte", "b: kotlin.Short"])
-                typealias X = Byte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Byte and Int - typealias`() {
@@ -56,12 +59,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Byte", "b: kotlin.Int"])
-                typealias X = Byte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Byte and Long - typealias`() {
@@ -73,12 +79,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Byte", "b: kotlin.Long"])
-                typealias X = Byte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Short and Byte - typealias`() {
@@ -89,13 +98,14 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             simpleSingleSourceTarget("b", "typealias X = Byte")
         }
 
-        result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Byte"])
-                typealias X = Byte
+        result.assertCommonized("(a, b)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Short and Short - typealias`() {
@@ -122,13 +132,14 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             simpleSingleSourceTarget("b", "typealias X = Int")
         }
 
-        result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int"])
-                typealias X = Short
+        result.assertCommonized("(a, b)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Short and Long - typealias`() {
@@ -140,12 +151,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Long"])
-                typealias X = Short
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Int and Byte - typealias`() {
@@ -157,12 +171,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Byte"])
-                typealias X = Byte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Int and Short - typealias`() {
@@ -174,12 +191,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Short"])
-                typealias X = Short
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Int and Int - typealias`() {
@@ -207,12 +227,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
-                typealias X = Int
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Long and Byte - typealias`() {
@@ -224,12 +247,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Byte"])
-                typealias X = Byte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Long and Short - typealias`() {
@@ -241,12 +267,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Short"])
-                typealias X = Short
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Long and Int - typealias`() {
@@ -258,12 +287,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Int"])
-                typealias X = Int
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Long and Long - typealias`() {
@@ -307,12 +339,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.UByte", "b: kotlin.UShort"])
-                typealias X = UByte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test UByte and UInt - typealias`() {
@@ -324,12 +359,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.UByte", "b: kotlin.UInt"])
-                typealias X = UByte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test UByte and ULong - typealias`() {
@@ -341,12 +379,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.UByte", "b: kotlin.ULong"])
-                typealias X = UByte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test UShort and UByte - typealias`() {
@@ -358,12 +399,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.UShort", "b: kotlin.UByte"])
-                typealias X = UByte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test UShort and UShort - typealias`() {
@@ -391,12 +435,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.UShort", "b: kotlin.UInt"])
-                typealias X = UShort
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test UShort and ULong - typealias`() {
@@ -408,12 +455,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.UShort", "b: kotlin.ULong"])
-                typealias X = UShort
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test UInt and UByte - typealias`() {
@@ -425,12 +475,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.UInt", "b: kotlin.UByte"])
-                typealias X = UByte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test UInt and UShort - typealias`() {
@@ -442,12 +495,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.UInt", "b: kotlin.UShort"])
-                typealias X = UShort
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test UInt and UInt - typealias`() {
@@ -475,12 +531,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.UInt", "b: kotlin.ULong"])
-                typealias X = UInt
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test ULong and UByte - typealias`() {
@@ -492,12 +551,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.ULong", "b: kotlin.UByte"])
-                typealias X = UByte
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test ULong and UShort - typealias`() {
@@ -509,12 +571,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.ULong", "b: kotlin.UShort"])
-                typealias X = UShort
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test ULong and UInt - typealias`() {
@@ -526,12 +591,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)",
-            """
-                @UnsafeNumber(["a: kotlin.ULong", "b: kotlin.UInt"])
-                typealias X = UInt
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test ULong and ULong - typealias`() {
@@ -565,27 +633,46 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)", """
-                @UnsafeNumber(["a: kotlinx.cinterop.UIntVarOf", "b: kotlinx.cinterop.ULongVarOf"])
-                typealias X = kotlinx.cinterop.UIntVarOf
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : kotlinx.cinterop.UVarOf<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test IntVarOf and LongVarOf - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
             registerFakeStdlibDependency("(a, b)")
-            simpleSingleSourceTarget("a", "typealias X = kotlinx.cinterop.IntVarOf")
-            simpleSingleSourceTarget("b", "typealias X = kotlinx.cinterop.LongVarOf")
+            simpleSingleSourceTarget(
+                "a", """
+                typealias A = Int
+                typealias X = kotlinx.cinterop.IntVarOf<A>
+            """.trimIndent()
+            )
+            simpleSingleSourceTarget(
+                "b", """
+                typealias A = Long
+                typealias X = kotlinx.cinterop.LongVarOf<A>
+            """.trimIndent()
+            )
         }
 
         result.assertCommonized(
-            "(a, b)", """
-                @UnsafeNumber(["a: kotlinx.cinterop.IntVarOf", "b: kotlinx.cinterop.LongVarOf"])
-                typealias X = kotlinx.cinterop.IntVarOf
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class A : Number(), SignedInteger<A>
+                expect class X : kotlinx.cinterop.SignedVarOf<A>
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test Int and Long - typealias chain`() {
@@ -611,16 +698,16 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             )
         }
 
-        result.assertCommonized(
-            "(a, b)", """
-                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
-                typealias A = Int
-                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
+        result.assertCommonized("(a, b)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class A : Number(), SignedInteger<A>
                 typealias B = A
-                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
                 typealias X = B
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test function with pure number types parameter`() {
@@ -661,13 +748,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             )
         }
 
-        result.assertCommonized(
-            "(a, b)", """
-                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
-                typealias X = Int
+        result.assertCommonized("(a, b)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
                 expect fun x(p: X)
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test property with pure number return type`() {
@@ -704,13 +793,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             )
         }
 
-        result.assertCommonized(
-            "(a, b)", """
-                @UnsafeNumber(["a: kotlin.UShort", "b: kotlin.ULong"])
-                typealias X = UShort
+        result.assertCommonized("(a, b)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : UnsignedInteger<X>
                 expect val x: X 
             """.trimIndent()
-        )
+            )
+        }
     }
 
     fun `test multilevel hierarchy`() {
@@ -726,11 +817,15 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         }
 
         result.assertCommonized(
-            "(a, b)", """
-                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int"])
-                typealias X = Short
+            "(a, b)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
 
         result.assertCommonized(
             "(c, d)", """
@@ -739,25 +834,37 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
 
         result.assertCommonized(
-            "(e, f)", """
-                @UnsafeNumber(["e: kotlin.Long", "f: kotlin.Int"])
-                typealias X = Int
+            "(e, f)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
 
         result.assertCommonized(
-            "(c, d, e, f)", """
-                @UnsafeNumber(["c: kotlin.Int", "d: kotlin.Int", "e: kotlin.Long", "f: kotlin.Int"])
-                typealias X = Int
+            "(c, d, e, f)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
 
         result.assertCommonized(
-            "(a, b, c, d, e, f)", """
-                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int" ,"c: kotlin.Int", "d: kotlin.Int","e: kotlin.Long", "f: kotlin.Int"])
-                typealias X = Short
+            "(a, b, c, d, e, f)"
+        ) {
+            generatedPhantoms()
+            source(
+                """
+                expect class X : Number(), SignedInteger<X>
             """.trimIndent()
-        )
+            )
+        }
     }
 }
 
@@ -767,7 +874,6 @@ private fun ParametersBuilder.registerFakeStdlibDependency(vararg outputTarget: 
         unsignedIntegers()
         unsingedVarIntegers()
         singedVarIntegers()
-        unsafeNumberAnnotationSource()
     }
 }
 
@@ -799,29 +905,10 @@ private fun InlineSourceBuilder.ModuleBuilder.singedVarIntegers() {
     source(
         """
         package kotlinx.cinterop
-        class ByteVarOf
-        class ShortVarOf
-        class IntVarOf
-        class LongVarOf
+        class ByteVarOf<T : Byte>
+        class ShortVarOf<T : Short>
+        class IntVarOf<T : Int>
+        class LongVarOf<T : Long>
         """.trimIndent(), "SignedVarOf.kt"
-    )
-}
-
-internal fun InlineSourceBuilder.ModuleBuilder.unsafeNumberAnnotationSource() {
-    source(
-        """
-            package kotlinx.cinterop
-            @Target(AnnotationTarget.TYPEALIAS)
-            @Retention(AnnotationRetention.BINARY)
-            annotation class UnsafeNumber(val actualPlatformTypes: Array<String>)
-        """.trimIndent(),
-        "UnsafeNumberAnnotation.kt"
-    )
-
-    source(
-        """
-            typealias UnsafeNumber = kotlinx.cinterop.UnsafeNumber
-        """.trimIndent(),
-        "UnsafeNumberTypeAlias.kt"
     )
 }
