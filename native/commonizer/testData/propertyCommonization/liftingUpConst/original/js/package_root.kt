@@ -28,11 +28,8 @@ const val property19: Char = 42.toChar()
 const val property20: Char = 42.toChar()
 
 const val property21: Byte = 42
-const val property22: Short = 42
-const val property23: Int = 42
-const val property24: Long = 42
-const val property25: Double = 4.2
-const val property26: Float = 4.2f
-const val property27 = true
-const val property28 = "42"
-const val property29: Char = 42.toChar()
+const val property22: Double = 4.2
+const val property23: Float = 4.2f
+const val property24 = true
+const val property25 = "42"
+const val property26: Char = 42.toChar()

@@ -27,8 +27,8 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val isMarkedNullable = isMarkedNullableCommonizer.commonize(expansions.map { it.isMarkedNullable }) ?: return null
 
         val substitutedTypes = substituteTypesIfNecessary(values)
-            ?: typeCommonizer.options.enableOptimisticNumberTypeCommonization.ifTrue {
-                return OptimisticNumbersTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
+            ?: typeCommonizer.options.enableCovariantNumericTypeCommonization.ifTrue {
+                return NumericTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
             } ?: return null
 
         val classifierId = substitutedTypes.singleDistinctValueOrNull { it.classifierId } ?: return null

@@ -27,17 +27,13 @@ fun function5(): Planet = A("Earth", 12742)
 fun function6(): Planet = Planet("Earth", 12742)
 fun function7(): C = C("Earth", 12742)
 
-val propertyWithMismatchedType1: Long = 1
-val propertyWithMismatchedType2: Short = 1
-val propertyWithMismatchedType3: Number = 1
-val propertyWithMismatchedType4: Comparable<Int> = 1
-val propertyWithMismatchedType5: String = 1.toString()
+val propertyWithMismatchedType1: Number = 1
+val propertyWithMismatchedType2: Comparable<Int> = 1
+val propertyWithMismatchedType3: String = 1.toString()
 
-fun functionWithMismatchedType1(): Long = 1
-fun functionWithMismatchedType2(): Short = 1
-fun functionWithMismatchedType3(): Number = 1
-fun functionWithMismatchedType4(): Comparable<Int> = 1
-fun functionWithMismatchedType5(): String = 1.toString()
+fun functionWithMismatchedType1(): Number = 1
+fun functionWithMismatchedType2(): Comparable<Int> = 1
+fun functionWithMismatchedType3(): String = 1.toString()
 
 class Box<T>(val value: T)
 class Fox

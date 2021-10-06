@@ -30,14 +30,10 @@ fun function7() = C("Earth", 12742)
 val propertyWithMismatchedType1: Int = 1
 val propertyWithMismatchedType2: Int = 1
 val propertyWithMismatchedType3: Int = 1
-val propertyWithMismatchedType4: Int = 1
-val propertyWithMismatchedType5: Int = 1
 
 fun functionWithMismatchedType1(): Int = 1
 fun functionWithMismatchedType2(): Int = 1
 fun functionWithMismatchedType3(): Int = 1
-fun functionWithMismatchedType4(): Int = 1
-fun functionWithMismatchedType5(): Int = 1
 
 class Box<T>(val value: T)
 class Fox

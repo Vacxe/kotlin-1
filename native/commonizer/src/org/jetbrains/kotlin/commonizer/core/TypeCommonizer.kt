@@ -34,17 +34,11 @@ class TypeCommonizer(
     }
 
     data class Options(
-        val enableOptimisticNumberTypeCommonization: Boolean = false,
         val enableCovariantNullabilityCommonization: Boolean = false,
         val enableForwardTypeAliasSubstitution: Boolean = true,
         val enableBackwardsTypeAliasSubstitution: Boolean = true,
+        val enableCovariantNumericTypeCommonization: Boolean = false,
     ) {
-
-        fun withOptimisticNumberTypeCommonizationEnabled(enabled: Boolean = true): Options {
-            return if (enableOptimisticNumberTypeCommonization == enabled) this
-            else copy(enableOptimisticNumberTypeCommonization = false)
-        }
-
         fun withCovariantNullabilityCommonizationEnabled(enabled: Boolean = true): Options {
             return if (enableCovariantNullabilityCommonization == enabled) this
             else copy(enableCovariantNullabilityCommonization = enabled)
@@ -62,6 +56,11 @@ class TypeCommonizer(
 
         fun withTypeAliasSubstitutionEnabled(enabled: Boolean = true): Options {
             return withForwardTypeAliasSubstitutionEnabled(enabled).withBackwardsTypeAliasSubstitutionEnabled(enabled)
+        }
+
+        fun withCovariantNumericTypeCommonizationEnabled(enabled: Boolean = true): Options {
+            return if (enableCovariantNumericTypeCommonization == enabled) this
+            else copy(enableCovariantNumericTypeCommonization = enabled)
         }
 
         companion object {
