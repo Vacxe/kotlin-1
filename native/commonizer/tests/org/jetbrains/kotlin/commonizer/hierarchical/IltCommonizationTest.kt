@@ -18,8 +18,8 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
                 "a", """
                     package test                    
 
-                    typealias ilt_t = Int
-                    typealias ilt_t_alias = ilt_t
+                    typealias IntegerType = Int
+                    typealias IntegerTypeAlias = IntegerType
                 """.trimIndent()
             )
 
@@ -27,8 +27,8 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
                 "b", """
                     package test
                     
-                    typealias ilt_t = Long
-                    typealias ilt_t_alias = ilt_t
+                    typealias IntegerType = Long
+                    typealias IntegerTypeAlias = IntegerType
                 """.trimIndent()
             )
         }
@@ -39,8 +39,8 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
                 """
                     package test                    
 
-                    expect class ilt_t : Number(), SignedInteger<ilt_t>
-                    typealias ilt_t_alias = ilt_t
+                    expect class IntegerType : Number, SignedInteger<IntegerType>
+                    typealias IntegerTypeAlias = IntegerType
                 """.trimIndent(),
                 name = "test.kt"
             )
@@ -74,6 +74,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             simpleSingleSourceTarget(
                 "b", """
                 package test
+                
                 typealias Ilt = Long
                 typealias IltVar = kotlinx.cinterop.LongVarOf<Ilt>
             """.trimIndent()
@@ -85,7 +86,8 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             source(
                 name = "test.kt", content = """
                 package test
-                expect class Ilt : Number(), SignedInteger<Ilt>
+                
+                expect class Ilt : Number, SignedInteger<Ilt>
                 expect class IltVar : kotlinx.cinterop.SignedVarOf<Ilt>
             """.trimIndent()
             )
@@ -122,7 +124,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
                 """
                 package test
                 
-                expect class Integer : Number(), SignedInteger<Integer>
+                expect class Integer : Number, SignedInteger<Integer>
             """.trimIndent()
             )
         }
@@ -133,7 +135,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
                 """
                 package test
                 
-                expect class Integer : Number(), SignedInteger<Integer>
+                expect class Integer : Number, SignedInteger<Integer>
             """.trimIndent()
             )
         }
@@ -179,7 +181,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
                 """
                 package test
                 
-                expect class Integer : Number(), SignedInteger<Integer>
+                expect class Integer : Number, SignedInteger<Integer>
             """.trimIndent()
             )
         }
@@ -190,7 +192,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
                 """
                 package test
                 
-                expect class Integer : Number(), SignedInteger<Integer>
+                expect class Integer : Number, SignedInteger<Integer>
             """.trimIndent()
             )
         }
@@ -201,7 +203,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
                 """
                 package test
                 
-                expect class Integer : Number(), SignedInteger<Integer>
+                expect class Integer : Number, SignedInteger<Integer>
             """.trimIndent()
             )
         }
@@ -231,7 +233,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             generatedPhantoms()
             source(
                 """
-                expect class Inner : Number(), SignedInteger<Inner>
+                expect class Inner : Number, SignedInteger<Inner>
                 typealias Outer = Inner
             """.trimIndent()
             )
@@ -241,7 +243,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             generatedPhantoms()
             source(
                 """
-                expect class Outer : Number(), SignedInteger<Outer>
+                expect class Outer : Number, SignedInteger<Outer>
             """.trimIndent()
             )
         }
@@ -276,7 +278,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             generatedPhantoms()
             source(
                 """
-                expect class Inner : Number(), SignedInteger<Inner>
+                expect class Inner : Number, SignedInteger<Inner>
                 typealias Outer = Inner
             """.trimIndent()
             )
@@ -286,7 +288,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             generatedPhantoms()
             source(
                 """
-                expect class Different : Number(), SignedInteger<Different>
+                expect class Different : Number, SignedInteger<Different>
                 typealias Outer = Different
             """.trimIndent()
             )
@@ -296,7 +298,7 @@ class IltCommonizationTest : AbstractInlineSourcesCommonizationTest() {
             generatedPhantoms()
             source(
                 """
-                expect class Outer : Number(), SignedInteger<Outer>
+                expect class Outer : Number, SignedInteger<Outer>
             """.trimIndent()
             )
         }
@@ -318,15 +320,14 @@ internal fun InlineSourceBuilder.ModuleBuilder.generatedPhantoms() {
             expect interface SignedInteger<SELF : SignedInteger<SELF>>
         """.trimIndent()
         )
-    }
 
-    dependency {
         source(
             name = "phantomVariables.kt", content = """
-                package kotlinx.cinterop               
+                package kotlinx.cinterop
 
-                expect open class SignedVarOf<T : kotlin.SignedInteger<T>> : kotlinx.cinterop.CVariable
-                expect open class UnsignedVarOf<T : kotlin.UnsignedInteger<T>> : kotlinx.cinterop.CVariable
+                open class CVariable
+                expect open class SignedVarOf<T : kotlin.SignedInteger<T>> : CVariable
+                expect open class UnsignedVarOf<T : kotlin.UnsignedInteger<T>> : CVariable
             """.trimIndent()
         )
     }
