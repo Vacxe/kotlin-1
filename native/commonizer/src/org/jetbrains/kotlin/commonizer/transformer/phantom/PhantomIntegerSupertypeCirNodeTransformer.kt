@@ -68,7 +68,7 @@ internal class PhantomIntegerSupertypeCirNodeTransformer(
         if (artificialClassNode.targetDeclarations[targetIndex] != null) return
 
         artificialClassNode.targetDeclarations[targetIndex] = typeAlias.toArtificialCirClass(
-            TypeAliasToClassConversion.PhantomInteger(classifiers, targetIndex, typeAliasNode)
+            SupertypeResolutionMode.AddPhantomIntegerSupertype(classifiers, targetIndex, typeAliasNode)
         )
     }
 
@@ -81,7 +81,7 @@ internal class PhantomIntegerSupertypeCirNodeTransformer(
         val typeAliasArgumentType = integerParameterType.type.safeAs<CirTypeAliasType>() ?: return
 
         artificialClassNode.targetDeclarations[targetIndex] = typeAlias.toArtificialCirClass(
-            TypeAliasToClassConversion.PhantomVarOf(classifiers, targetIndex, typeAliasArgumentType)
+            SupertypeResolutionMode.AddPhantomIntegerVariableSupertype(classifiers, targetIndex, typeAliasArgumentType)
         )
     }
 }

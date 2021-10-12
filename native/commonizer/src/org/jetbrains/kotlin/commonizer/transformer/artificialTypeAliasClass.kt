@@ -23,27 +23,26 @@ internal fun ClassNodeIndex(module: CirModuleNode): ClassNodeIndex = module.pack
     .flatMap { pkg -> pkg.classes.values }
     .associateBy { clazz -> clazz.id }
 
-// TODO: rethink naming
-sealed class TypeAliasToClassConversion(
+sealed class SupertypeResolutionMode(
     val classifiers: CirKnownClassifiers,
     val targetIndex: Int,
 ) {
-    class Inline(
+    class SimpleForAliasInlining(
         classifiers: CirKnownClassifiers,
         targetIndex: Int,
-    ) : TypeAliasToClassConversion(classifiers, targetIndex)
+    ) : SupertypeResolutionMode(classifiers, targetIndex)
 
-    class PhantomInteger(
+    class AddPhantomIntegerSupertype(
         classifiers: CirKnownClassifiers,
         targetIndex: Int,
         val typeAliasNode: CirTypeAliasNode,
-    ) : TypeAliasToClassConversion(classifiers, targetIndex)
+    ) : SupertypeResolutionMode(classifiers, targetIndex)
 
-    class PhantomVarOf(
+    class AddPhantomIntegerVariableSupertype(
         classifiers: CirKnownClassifiers,
         targetIndex: Int,
         val originalTypeArgument: CirTypeAliasType,
-    ) : TypeAliasToClassConversion(classifiers, targetIndex)
+    ) : SupertypeResolutionMode(classifiers, targetIndex)
 }
 
 fun CirPackageNode.createArtificialClassNode(
@@ -67,32 +66,40 @@ fun CirPackageNode.createArtificialClassNode(
 }
 
 internal fun CirTypeAlias.toArtificialCirClass(
-    typeAliasConversion: TypeAliasToClassConversion
+    supertypeResolutionMode: SupertypeResolutionMode
 ): CirClass =
     CirClass.create(
         annotations = emptyList(), name = name, typeParameters = typeParameters,
-        supertypes = resolveSupertypes(typeAliasConversion),
+        supertypes = resolveSupertypes(supertypeResolutionMode),
         visibility = this.visibility, modality = Modality.FINAL, kind = ClassKind.CLASS,
         companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false
     )
 
-// TODO: divide
-private fun CirTypeAlias.resolveSupertypes(conversion: TypeAliasToClassConversion): List<CirType> = with(conversion) {
+private fun CirTypeAlias.resolveSupertypes(supertypeResolutionMode: SupertypeResolutionMode): List<CirType> {
     if (expandedType.isMarkedNullable) return emptyList()
-    val resolver = SimpleCirSupertypesResolver(
+
+    val resolver = CirSupertypeResolver(supertypeResolutionMode)
+    return resolver.supertypes(expandedType).toList()
+}
+
+private fun CirSupertypeResolver(
+    supertypeResolutionMode: SupertypeResolutionMode
+): CirSupertypesResolver {
+    val classifiers = supertypeResolutionMode.classifiers
+    val targetIndex = supertypeResolutionMode.targetIndex
+
+    val simpleSupertypeResolver = SimpleCirSupertypesResolver(
         classifiers = classifiers.classifierIndices[targetIndex],
         dependencies = CirProvidedClassifiers.of(
             classifiers.commonDependencies, classifiers.targetDependencies[targetIndex]
         )
-    ).let { simpleSupertypeResolver ->
-        when (conversion) {
-            is TypeAliasToClassConversion.Inline -> simpleSupertypeResolver
-            is TypeAliasToClassConversion.PhantomInteger ->
-                simpleSupertypeResolver.withPhantomIntegerSupertypes(conversion.typeAliasNode)
-            is TypeAliasToClassConversion.PhantomVarOf ->
-                simpleSupertypeResolver.withPhantomVarOfSupertypes(conversion.originalTypeArgument)
-        }
-    }
+    )
 
-    return resolver.supertypes(expandedType).toList()
+    return when (supertypeResolutionMode) {
+        is SupertypeResolutionMode.SimpleForAliasInlining -> simpleSupertypeResolver
+        is SupertypeResolutionMode.AddPhantomIntegerSupertype ->
+            simpleSupertypeResolver.withPhantomIntegerSupertypes(supertypeResolutionMode.typeAliasNode)
+        is SupertypeResolutionMode.AddPhantomIntegerVariableSupertype ->
+            simpleSupertypeResolver.withPhantomVarOfSupertypes(supertypeResolutionMode.originalTypeArgument)
+    }
 }

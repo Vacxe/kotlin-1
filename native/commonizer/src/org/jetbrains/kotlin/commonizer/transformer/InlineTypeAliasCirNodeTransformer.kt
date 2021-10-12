@@ -79,7 +79,7 @@ internal class InlineTypeAliasCirNodeTransformer(
         val intoArtificialClass = ArtificialAliasedCirClass(
             pointingTypeAlias = fromTypeAlias,
             pointedClass = fromAliasedClassNode?.targetDeclarations?.get(targetIndex)
-                ?: fromTypeAlias.toArtificialCirClass(TypeAliasToClassConversion.Inline(classifiers, targetIndex))
+                ?: fromTypeAlias.toArtificialCirClass(SupertypeResolutionMode.SimpleForAliasInlining(classifiers, targetIndex))
         )
 
         intoClassNode.targetDeclarations[targetIndex] = intoArtificialClass
