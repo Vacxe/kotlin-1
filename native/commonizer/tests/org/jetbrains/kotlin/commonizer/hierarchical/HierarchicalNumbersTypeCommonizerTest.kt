@@ -1169,6 +1169,121 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             )
         }
     }
+
+    // ((LongVar, IntVar), ShortVar), (ByteVar, IntVar))
+    fun `test multi-level commonization of chained integer variable type aliases`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(a, b, c)", "(d, e)", "(a, b, c, d, e)")
+
+            registerFakeStdlibDependency("(a, b)", "(a, b, c)", "(d, e)", "(a, b, c, d, e)")
+
+            "a" withSource """
+                import kotlinx.cinterop.*
+                
+                typealias Ab = Long
+                typealias Abc = Ab
+                typealias Abcde = Abc
+                
+                typealias AbVar = LongVarOf<Ab>
+                typealias AbcVar = AbVar
+                typealias AbcdeVar = AbcVar
+            """.trimIndent()
+
+            "b" withSource """
+                import kotlinx.cinterop.*
+                
+                typealias Ab = Int
+                typealias Abc = Ab
+                typealias Abcde = Abc
+                
+                typealias AbVar = IntVarOf<Ab>
+                typealias AbcVar = AbVar
+                typealias AbcdeVar = AbcVar
+            """.trimIndent()
+
+            "c" withSource """
+                import kotlinx.cinterop.*
+                
+                typealias Abc = Short
+                typealias Abcde = Abc
+                
+                typealias AbcVar = ShortVarOf<Abc>
+                typealias AbcdeVar = AbcVar
+            """.trimIndent()
+
+            "d" withSource """
+                import kotlinx.cinterop.*
+                
+                typealias De = Byte
+                typealias Abcde = De
+                
+                typealias DeVar = ByteVarOf<De>
+                typealias AbcdeVar = DeVar
+            """.trimIndent()
+
+            "e" withSource """
+                import kotlinx.cinterop.*
+                
+                typealias De = Int
+                typealias Abcde = De
+                
+                typealias DeVar = IntVarOf<De>
+                typealias AbcdeVar = DeVar
+            """.trimIndent()
+        }
+
+        result.assertCommonized("(a, b)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class Ab : Number, SignedInteger<Ab>
+                typealias Abc = Ab
+                typealias Abcde = Abc
+                
+                expect class AbVar : kotlinx.cinterop.SignedVarOf<Ab>
+                typealias AbcVar = AbVar
+                typealias AbcdeVar = AbcVar                
+            """.trimIndent()
+            )
+        }
+
+        result.assertCommonized("(a, b, c)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class Abc : Number, SignedInteger<Abc>
+                typealias Abcde = Abc
+                
+                expect class AbcVar : kotlinx.cinterop.SignedVarOf<Abc>
+                typealias AbcdeVar = AbcVar                
+            """.trimIndent()
+            )
+        }
+
+        result.assertCommonized("(d, e)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class De : Number, SignedInteger<De>
+                typealias Abcde = De
+                
+                expect class DeVar : kotlinx.cinterop.SignedVarOf<De>
+                typealias AbcdeVar = DeVar                    
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized("(a, b, c, d, e)") {
+            generatedPhantoms()
+            source(
+                """
+                expect class Abcde : Number, SignedInteger<Abcde>
+
+                expect class AbcdeVar : kotlinx.cinterop.SignedVarOf<Abcde>
+                """.trimIndent()
+            )
+        }
+    }
 }
 
 private fun ParametersBuilder.registerFakeStdlibDependency(vararg outputTarget: String) {
