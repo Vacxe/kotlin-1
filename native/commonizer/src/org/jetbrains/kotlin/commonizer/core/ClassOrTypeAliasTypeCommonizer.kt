@@ -20,6 +20,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
 
     private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.options)
     private val typeDistanceMeasurement = TypeDistanceMeasurement(typeCommonizer.options)
+    private val numericTypeCommonizer = NumericTypeCommonizer(typeCommonizer)
 
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
         if (values.isEmpty()) return null
@@ -28,7 +29,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
 
         val substitutedTypes = substituteTypesIfNecessary(values)
             ?: typeCommonizer.options.enableCovariantNumericTypeCommonization.ifTrue {
-                return NumericTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
+                return numericTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
             } ?: return null
 
         val classifierId = substitutedTypes.singleDistinctValueOrNull { it.classifierId } ?: return null

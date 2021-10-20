@@ -52,7 +52,7 @@ internal fun createConvertExtensionFunction(generationContext: GenerationContext
             type = CirClassType.createInterned(
                 classId = receiverType,
                 outerType = null,
-                arguments = SmartList(CirStarTypeProjection),
+                arguments = emptyList(),
                 isMarkedNullable = false,
             ),
         ),
@@ -74,31 +74,11 @@ internal fun createConvertExtensionFunction(generationContext: GenerationContext
 internal fun generalizedIntegerInterface(generationContext: GenerationContext, entityId: CirEntityId): GeneratedInterface {
     val name = entityId.relativeNameSegments.last()
 
-    val selfTypeParameter = CirTypeParameter(
-        annotations = emptyList(),
-        name = CirName.create("SELF"),
-        isReified = false,
-        variance = Variance.INVARIANT,
-        upperBounds = SmartList(
-            CirClassType.createInterned(
-                classId = entityId,
-                outerType = null,
-                arguments = SmartList(
-                    CirRegularTypeProjection(
-                        projectionKind = Variance.INVARIANT,
-                        type = CirTypeParameterType.createInterned(index = 0, isMarkedNullable = false)
-                    )
-                ),
-                isMarkedNullable = false,
-            )
-        )
-    )
-
     val classProducer = {
         CirClass.create(
             annotations = emptyList(),
             name = name,
-            typeParameters = SmartList(selfTypeParameter),
+            typeParameters = emptyList(),
             visibility = Visibilities.Public,
             modality = Modality.OPEN,
             kind = ClassKind.INTERFACE,
@@ -168,11 +148,9 @@ internal fun mathOperations(
     realIntegerIds: Collection<CirEntityId>,
     phantomIntegerId: CirEntityId,
 ): List<GeneratedFunction> {
-    val selfType = CirTypeParameterType.createInterned(index = 0, isMarkedNullable = false)
     val intType = KOTLIN_INT.asCirEntityId().toCirType()
-    val unspecifiedIntegerType = phantomIntegerId.toCirType(arguments = SmartList(CirStarTypeProjection))
-    val parameterTypesForDuplicatedMembers = realIntegerIds.map { it.toCirType() } +
-            phantomIntegerId.toCirType(arguments = SmartList(CirStarTypeProjection))
+    val unspecifiedIntegerType = phantomIntegerId.toCirType()
+    val parameterTypesForDuplicatedMembers = realIntegerIds.map { it.toCirType() } + unspecifiedIntegerType
 
     val singletonMembers = buildList {
         listOf("inc", "dec").map { name ->
@@ -182,7 +160,7 @@ internal fun mathOperations(
                 isExternal = isSingletonMembersExternal,
                 isOperator = true,
                 valueParameters = emptyList(),
-                returnType = selfType,
+                returnType = unspecifiedIntegerType,
                 containingClass = containingClass,
             )
         }.forEach(::add)
@@ -193,7 +171,7 @@ internal fun mathOperations(
                 isInline = isSingletonMembersInline,
                 isExternal = isSingletonMembersExternal,
                 valueParameters = emptyList(),
-                returnType = selfType,
+                returnType = unspecifiedIntegerType,
                 containingClass = containingClass,
             )
         )
@@ -204,8 +182,8 @@ internal fun mathOperations(
                 isInline = isSingletonMembersInline,
                 isExternal = isSingletonMembersExternal,
                 isInfix = true,
-                valueParameters = SmartList(simpleValueParameter(name = "other", type = selfType)),
-                returnType = selfType,
+                valueParameters = SmartList(simpleValueParameter(name = "other", type = unspecifiedIntegerType)),
+                returnType = unspecifiedIntegerType,
                 containingClass = containingClass,
             )
         }.forEach(::add)
@@ -217,7 +195,7 @@ internal fun mathOperations(
                 isExternal = isSingletonMembersExternal,
                 isInfix = true,
                 valueParameters = SmartList(simpleValueParameter(name = "bitCount", type = intType)),
-                returnType = selfType,
+                returnType = unspecifiedIntegerType,
                 containingClass = containingClass,
             )
         }.forEach(::add)
@@ -330,7 +308,7 @@ internal fun abstractIntegerConversionMember(context: GenerationContext, name: C
     return cirFunction.toGeneratedFunction(context)
 }
 
-internal fun cirTypeParameterWithSelfBound(boundId: CirEntityId): CirTypeParameter =
+internal fun cirTypeParameterWithBound(boundId: CirEntityId): CirTypeParameter =
     CirTypeParameter(
         annotations = emptyList(),
         name = CirName.create("T"),
@@ -340,12 +318,7 @@ internal fun cirTypeParameterWithSelfBound(boundId: CirEntityId): CirTypeParamet
             CirClassType.createInterned(
                 classId = boundId,
                 outerType = null,
-                arguments = SmartList(
-                    CirRegularTypeProjection(
-                        projectionKind = Variance.INVARIANT,
-                        type = CirTypeParameterType.createInterned(index = 0, isMarkedNullable = false)
-                    )
-                ),
+                arguments = emptyList(),
                 isMarkedNullable = false,
             ),
         )
@@ -368,7 +341,7 @@ internal fun varOfClass(context: GenerationContext, id: CirEntityId, boundId: Ci
             supertypes = supertypes,
             annotations = emptyList(),
             name = name,
-            typeParameters = SmartList(cirTypeParameterWithSelfBound(boundId)),
+            typeParameters = SmartList(cirTypeParameterWithBound(boundId)),
             visibility = Visibilities.Public,
             modality = Modality.OPEN,
             kind = ClassKind.CLASS,
@@ -409,7 +382,7 @@ internal fun valueExtensionProperty(context: GenerationContext, upperBoundId: Ci
     val valueProperty = CirProperty(
         annotations = emptyList(),
         name = CirName.create("value"),
-        typeParameters = SmartList(cirTypeParameterWithSelfBound(upperBoundId)),
+        typeParameters = SmartList(cirTypeParameterWithBound(upperBoundId)),
         visibility = Visibilities.Public,
         modality = Modality.FINAL,
         containingClass = null,

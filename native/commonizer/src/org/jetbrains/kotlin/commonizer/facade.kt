@@ -77,7 +77,6 @@ private fun CirRootNode.transform(parameters: CommonizerParameters, classifiers:
 }
 
 private fun createTransformers(parameters: CommonizerParameters, classifiers: CirKnownClassifiers): List<CirNodeTransformer> = listOf(
-    PhantomIntegerSupertypeCirNodeTransformer(parameters.storageManager, classifiers),
     InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers),
     ReApproximationCirNodeTransformer(
         parameters.storageManager, classifiers,

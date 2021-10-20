@@ -44,7 +44,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -64,7 +64,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -84,7 +84,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -102,7 +102,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -136,7 +136,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -156,7 +156,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -176,7 +176,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -196,7 +196,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -232,7 +232,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -252,7 +252,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -272,7 +272,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -292,7 +292,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -344,7 +344,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -364,7 +364,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -384,7 +384,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -404,7 +404,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -440,7 +440,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -460,7 +460,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -480,7 +480,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -500,7 +500,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -536,7 +536,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -556,7 +556,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -576,7 +576,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -596,7 +596,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
             """.trimIndent()
             )
         }
@@ -648,8 +648,8 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class A : UnsignedInteger<A>
-                expect class X : kotlinx.cinterop.UnsignedVarOf<A>
+                typealias A = UnsignedInteger
+                typealias X = kotlinx.cinterop.UnsignedVarOf<A>
             """.trimIndent()
             )
         }
@@ -679,8 +679,8 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class A : Number, SignedInteger<A>
-                expect class X : kotlinx.cinterop.SignedVarOf<A>
+                typealias A = SignedInteger
+                typealias X = kotlinx.cinterop.SignedVarOf<A>
             """.trimIndent()
             )
         }
@@ -713,7 +713,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class A : Number, SignedInteger<A>
+                typealias A = SignedInteger
                 typealias B = A
                 typealias X = B
             """.trimIndent()
@@ -763,7 +763,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
                 expect fun x(p: X)
             """.trimIndent()
             )
@@ -780,7 +780,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
 
         result.assertCommonized("(a, b)") {
             generatedPhantoms()
-            source("expect val x: UnsignedInteger<*>")
+            source("expect val x: UnsignedInteger")
         }
     }
 
@@ -806,7 +806,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : UnsignedInteger<X>
+                typealias X = UnsignedInteger
                 expect val x: X 
             """.trimIndent()
             )
@@ -831,7 +831,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -848,7 +848,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -859,7 +859,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -870,7 +870,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class X : Number, SignedInteger<X>
+                typealias X = SignedInteger
             """.trimIndent()
             )
         }
@@ -905,7 +905,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                     package test                    
 
-                    expect class IntegerType : Number, SignedInteger<IntegerType>
+                    typealias IntegerType = SignedInteger
                     typealias IntegerTypeAlias = IntegerType
                 """.trimIndent(),
                 name = "test.kt"
@@ -953,8 +953,8 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 name = "test.kt", content = """
                 package test
                 
-                expect class Integer : Number, SignedInteger<Integer>
-                expect class IntegerVar : kotlinx.cinterop.SignedVarOf<Integer>
+                typealias Integer = SignedInteger
+                typealias IntegerVar = kotlinx.cinterop.SignedVarOf<Integer>
             """.trimIndent()
             )
         }
@@ -990,7 +990,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                 package test
                 
-                expect class Integer : Number, SignedInteger<Integer>
+                typealias Integer = SignedInteger
             """.trimIndent()
             )
         }
@@ -1001,7 +1001,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                 package test
                 
-                expect class Integer : Number, SignedInteger<Integer>
+                typealias Integer = SignedInteger
             """.trimIndent()
             )
         }
@@ -1047,7 +1047,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                 package test
                 
-                expect class Integer : Number, SignedInteger<Integer>
+                typealias Integer = SignedInteger
             """.trimIndent()
             )
         }
@@ -1058,7 +1058,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                 package test
                 
-                expect class Integer : Number, SignedInteger<Integer>
+                typealias Integer = SignedInteger
             """.trimIndent()
             )
         }
@@ -1069,7 +1069,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                 package test
                 
-                expect class Integer : Number, SignedInteger<Integer>
+                typealias Integer = SignedInteger
             """.trimIndent()
             )
         }
@@ -1099,7 +1099,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class Inner : Number, SignedInteger<Inner>
+                typealias Inner = SignedInteger
                 typealias Outer = Inner
             """.trimIndent()
             )
@@ -1109,7 +1109,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class Outer : Number, SignedInteger<Outer>
+                typealias Outer = SignedInteger
             """.trimIndent()
             )
         }
@@ -1144,7 +1144,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class Inner : Number, SignedInteger<Inner>
+                typealias Inner = SignedInteger
                 typealias Outer = Inner
             """.trimIndent()
             )
@@ -1154,7 +1154,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class Different : Number, SignedInteger<Different>
+                typealias Different = SignedInteger
                 typealias Outer = Different
             """.trimIndent()
             )
@@ -1164,7 +1164,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class Outer : Number, SignedInteger<Outer>
+                typealias Outer = SignedInteger
             """.trimIndent()
             )
         }
@@ -1236,11 +1236,11 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class Ab : Number, SignedInteger<Ab>
+                typealias Ab = SignedInteger
                 typealias Abc = Ab
                 typealias Abcde = Abc
                 
-                expect class AbVar : kotlinx.cinterop.SignedVarOf<Ab>
+                typealias AbVar = kotlinx.cinterop.SignedVarOf<Ab>
                 typealias AbcVar = AbVar
                 typealias AbcdeVar = AbcVar                
             """.trimIndent()
@@ -1251,7 +1251,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class Abc : Number, SignedInteger<Abc>
+                typealias Abc = SignedInteger
                 typealias Abcde = Abc
                 
                 expect class AbcVar : kotlinx.cinterop.SignedVarOf<Abc>
@@ -1264,7 +1264,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class De : Number, SignedInteger<De>
+                typealias De = SignedInteger
                 typealias Abcde = De
                 
                 expect class DeVar : kotlinx.cinterop.SignedVarOf<De>
@@ -1277,7 +1277,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                expect class Abcde : Number, SignedInteger<Abcde>
+                typealias Abcde = SignedInteger
 
                 expect class AbcdeVar : kotlinx.cinterop.SignedVarOf<Abcde>
                 """.trimIndent()
@@ -1337,8 +1337,8 @@ internal fun InlineSourceBuilder.ModuleBuilder.generatedPhantoms() {
             name = "phantomIntegers.kt", content = """
             package kotlin        
 
-            expect interface UnsignedInteger<SELF : UnsignedInteger<SELF>>
-            expect interface SignedInteger<SELF : SignedInteger<SELF>>
+            expect interface UnsignedInteger
+            expect interface SignedInteger
         """.trimIndent()
         )
 
@@ -1347,8 +1347,8 @@ internal fun InlineSourceBuilder.ModuleBuilder.generatedPhantoms() {
                 package kotlinx.cinterop
 
                 open class CVariable
-                expect open class SignedVarOf<T : kotlin.SignedInteger<T>> : CVariable
-                expect open class UnsignedVarOf<T : kotlin.UnsignedInteger<T>> : CVariable
+                expect open class SignedVarOf<T : kotlin.SignedInteger> : CVariable
+                expect open class UnsignedVarOf<T : kotlin.UnsignedInteger> : CVariable
             """.trimIndent()
         )
     }

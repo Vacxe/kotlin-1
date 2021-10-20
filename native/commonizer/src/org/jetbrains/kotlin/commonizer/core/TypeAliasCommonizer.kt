@@ -17,6 +17,8 @@ class TypeAliasCommonizer(
         withBackwardsTypeAliasSubstitutionEnabled(false)
     }
 
+    private val numericTypeCommonizer = NumericTypeCommonizer(typeCommonizer)
+
     override fun invoke(values: List<CirTypeAlias>): CirTypeAlias? {
         if (values.isEmpty()) return null
 
@@ -24,7 +26,11 @@ class TypeAliasCommonizer(
 
         val typeParameters = TypeParameterListCommonizer(typeCommonizer).commonize(values.map { it.typeParameters }) ?: return null
 
-        val underlyingType = typeCommonizer.invoke(values.map { it.underlyingType }) as? CirClassOrTypeAliasType ?: return null
+        val underlyingTypes = values.map { it.underlyingType }
+
+        val commonizedUnderlyingType = typeCommonizer.invoke(underlyingTypes) as? CirClassOrTypeAliasType
+            ?: numericTypeCommonizer.commonize(underlyingTypes.map { it.expandedType() })
+            ?: return null
 
         val visibility = VisibilityCommonizer.lowering().commonize(values) ?: return null
 
@@ -32,8 +38,8 @@ class TypeAliasCommonizer(
             name = name,
             typeParameters = typeParameters,
             visibility = visibility,
-            underlyingType = underlyingType,
-            expandedType = underlyingType.expandedType(),
+            underlyingType = commonizedUnderlyingType,
+            expandedType = commonizedUnderlyingType.expandedType(),
             annotations = emptyList(),
         )
     }
