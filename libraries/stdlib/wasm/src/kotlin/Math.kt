@@ -952,7 +952,7 @@ public actual val Int.sign: Int get() = TODO("Wasm stdlib: Math")
  * @see absoluteValue extension property for [Long]
  */
 @SinceKotlin("1.2")
-public actual fun abs(n: Long): Long = TODO("Wasm stdlib: Math")
+public actual fun abs(n: Long): Long = if (n >= 0) n else -n
 
 /**
  * Returns the smaller of two values.
