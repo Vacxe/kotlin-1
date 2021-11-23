@@ -550,6 +550,7 @@ class ExpressionsConverter(
             }
         }
 
+        var result = firSelector
         (firSelector as? FirQualifiedAccess)?.let {
             if (isSafe) {
                 @OptIn(FirImplementationDetail::class)
@@ -560,13 +561,10 @@ class ExpressionsConverter(
                 )
             }
 
-            it.replaceExplicitReceiver(firReceiver)
-
-            @OptIn(FirImplementationDetail::class)
-            it.replaceSource(dotQualifiedExpression.toFirSourceElement())
+            result = convertFirSelector(it, dotQualifiedExpression.toFirSourceElement(), firReceiver!!) as? FirExpression
         }
 
-        return firSelector ?: buildErrorExpression(
+        return result ?: buildErrorExpression(
             null,
             ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
         )
