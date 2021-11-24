@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.filterOutAnnotations
@@ -48,7 +49,7 @@ private class ObjectClassLowering(val context: JvmBackendContext) : IrElementTra
 
 
     private fun process(irClass: IrClass) {
-        if (!irClass.isObject) return
+        if (!irClass.isObject || irClass.origin == IrDeclarationOrigin.OBJECT_IN_SCRIPT) return
 
         val publicInstanceField = context.cachedDeclarations.getFieldForObjectInstance(irClass)
         val privateInstanceField = context.cachedDeclarations.getPrivateFieldForObjectInstance(irClass)

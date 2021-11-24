@@ -41,6 +41,7 @@ interface IrDeclarationOrigin {
     object JVM_MULTIFILE_CLASS : IrDeclarationOriginImpl("JVM_MULTIFILE_CLASS")
 
     object SCRIPT_CLASS : IrDeclarationOriginImpl("SCRIPT_CLASS")
+    object OBJECT_IN_SCRIPT : IrDeclarationOriginImpl("OBJECT_IN_SCRIPT")
     object SCRIPT_STATEMENT : IrDeclarationOriginImpl("SCRIPT_STATEMENT")
     object SCRIPT_EARLIER_SCRIPTS : IrDeclarationOriginImpl("SCRIPT_EARLIER_SCRIPTS")
     object SCRIPT_CALL_PARAMETER : IrDeclarationOriginImpl("SCRIPT_CALL_PARAMETER")
