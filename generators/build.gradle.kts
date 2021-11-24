@@ -33,9 +33,10 @@ val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCom
 val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
 
 dependencies {
-    // for GeneratorsFileUtil
     api(kotlinStdlib("jdk8"))
-    api(intellijDep()) { includeJars("util") }
+    api(intellijPlatformUtil()) {
+        exclude(module = "annotations")
+    }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
@@ -68,7 +69,6 @@ dependencies {
     testApi(projectTests(":plugins:fir:fir-plugin-prototype"))
     testApi(projectTests(":generators:test-generator"))
     testCompileOnly(project(":kotlin-reflect-api"))
-    testImplementation(intellijDep()) { includeJars("idea_rt") }
     testImplementation(project(":kotlin-reflect"))
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
     testImplementation(projectTests(":compiler:test-infrastructure"))

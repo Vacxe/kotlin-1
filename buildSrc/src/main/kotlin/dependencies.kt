@@ -233,11 +233,8 @@ fun Project.testApiJUnit5(
             testApi("$component:$componentsVersion")
         }
 
-        addDependencyTo<ExternalModuleDependency>(this, "testImplementation", intellijDep()) {
-            // This dependency is needed only for FileComparisonFailure
-            includeJars("idea_rt", rootProject = rootProject)
-            isTransitive = false
-        }
+        // This dependency is needed only for FileComparisonFailure
+        add("testImplementation", intellijJavaRt())
 
         // This is needed only for using FileComparisonFailure, which relies on JUnit 3 classes
         add("testRuntimeOnly", commonDep("junit:junit"))

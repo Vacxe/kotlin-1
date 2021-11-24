@@ -16,12 +16,10 @@ dependencies {
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:cones"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
-    compileOnly(intellijDep()) {
-        includeJars("trove4j", rootProject = rootProject)
-    }
+    compileOnly(intellijCore())
+    compileOnly(intellijDependency("trove4j"))
 
-    runtimeOnly(intellijCoreDep()) { includeJars("jdom") }
+    runtimeOnly(intellijDependency("jdom"))
 }
 
 val writeCopyright by task<WriteCopyrightToFile> {

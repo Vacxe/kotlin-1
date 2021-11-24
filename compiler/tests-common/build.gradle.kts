@@ -57,34 +57,26 @@ dependencies {
     testApi(commonDep("com.android.tools:r8"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(toolsJar())
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCore())
 
     /*
      * Actually those dependencies are needed only at runtime, but they
      *   declared as Api dependencies to propagate them to all modules
      *   which depend on current one
      */
-    testApi(intellijDep()) {
-        includeJars(
-            "intellij-deps-fastutil-8.4.1-4",
-            "idea_rt",
-            "jps-model",
-            "platform-impl",
-            "streamex",
-            "jna",
-            rootProject = rootProject
-        )
-    }
-    testImplementation(intellijDep()) {
-        includeJars(
-            "guava",
-            "trove4j",
-            "asm-all",
-            "log4j",
-            "jdom",
-            rootProject = rootProject
-        )
-    }
+    testApi(intellijDependency("intellij-deps-fastutil"))
+    testApi(intellijDependency("streamex"))
+    testApi(intellijDependency("jna"))
+    testApi(jpsModel()) { isTransitive = false }
+    testApi(jpsModelImpl()) { isTransitive = false }
+    testApi(intellijJavaRt())
+
+    testImplementation(intellijDependency("guava"))
+    testImplementation(intellijDependency("trove4j"))
+    testImplementation(intellijDependency("asm-all"))
+    testImplementation(intellijDependency("log4j"))
+    testImplementation(intellijDependency("jdom"))
+
     testApiJUnit5()
 }
 

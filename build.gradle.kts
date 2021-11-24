@@ -152,22 +152,6 @@ if (!project.hasProperty("versions.kotlin-native")) {
 
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
 
-val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
-
-extra["intellijSeparateSdks"] = intellijSeparateSdks
-
-extra["IntellijCoreDependencies"] =
-    listOf(
-        "asm-all-9.0",
-        "guava",
-        "jdom",
-        "jna",
-        "log4j",
-        "snappy-in-java",
-        "streamex",
-        "trove4j"
-    ).filterNotNull()
-
 val irCompilerModules = arrayOf(
     ":compiler:ir.tree",
     ":compiler:ir.tree.impl",
@@ -418,7 +402,10 @@ allprojects {
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
     repositories {
-        kotlinBuildLocalRepo(project)
+        if (kotlinBuildProperties.getOrNull("attachedIntellijVersion") != null) {
+            kotlinBuildLocalRepo(project)
+        }
+
         mirrorRepo?.let(::maven)
 
         internalBootstrapRepo?.let(::maven)
@@ -430,9 +417,12 @@ allprojects {
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         maven("https://dl.google.com/dl/android/maven2")
-        maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 
         jcenter()
+
+        maven("https://www.jetbrains.com/intellij-repository/snapshots")
+        maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
+        maven("https://download.jetbrains.com/teamcity-repository/")
     }
 
     if (path.startsWith(":kotlin-ide.")) {

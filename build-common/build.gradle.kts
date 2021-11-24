@@ -14,9 +14,11 @@ dependencies {
     compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.config"))
     compileOnly(project(":kotlin-util-klib-metadata"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all", "trove4j", "util", rootProject = rootProject) }
     compileOnly(project(":kotlin-reflect-api"))
+
+    compileOnly(intellijCore())
+    compileOnly(intellijDependency("asm-all"))
+    compileOnly(intellijDependency("trove4j"))
 
     testCompileOnly(project(":compiler:cli-common"))
     testApi(projectTests(":compiler:tests-common"))

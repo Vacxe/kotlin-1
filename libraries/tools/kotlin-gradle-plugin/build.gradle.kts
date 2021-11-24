@@ -50,8 +50,9 @@ dependencies {
     compileOnly(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-build-metrics"))
 
-    implementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
-    implementation("com.google.guava:guava:${rootProject.extra["versions.jar.guava"]}")
+    implementation("com.google.code.gson:gson:${rootProject.extra["versions.gson"]}")
+    implementation("com.google.guava:guava:${rootProject.extra["versions.guava"]}")
+
     implementation("de.undercouch:gradle-download-task:4.1.1")
     implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
@@ -63,7 +64,7 @@ dependencies {
     compileOnly("com.android.tools.build:builder-model:3.4.0")
     compileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     compileOnly(project(":kotlin-reflect"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 
     runtimeOnly(project(":kotlin-compiler-embeddable"))
     runtimeOnly(project(":kotlin-annotation-processing-gradle"))
@@ -72,9 +73,12 @@ dependencies {
     runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     runtimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
 
-    embedded(compileOnly(intellijDep()) {
-        includeJars("asm-all", "gson", "guava", "serviceMessages", rootProject = rootProject)
-    })
+    compileOnly(intellijDependency("serviceMessages"))
+
+    embedded(intellijDependency("asm-all"))
+    embedded(intellijDependency("gson"))
+    embedded(intellijDependency("guava"))
+    embedded(intellijDependency("serviceMessages"))
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
     compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
@@ -86,7 +90,7 @@ dependencies {
 
     functionalTestImplementation(gradleKotlinDsl())
 
-    testImplementation(intellijDep()) { includeJars("junit", "serviceMessages", rootProject = rootProject) }
+    testImplementation(intellijDependency("serviceMessages"))
 
     testCompileOnly(project(":compiler"))
     testImplementation(projectTests(":kotlin-build-common"))

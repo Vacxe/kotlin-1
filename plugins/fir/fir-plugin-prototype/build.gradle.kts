@@ -14,7 +14,7 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.tree.impl"))
     compileOnly(project(":compiler:fir:entrypoint"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
     compileOnly(project(":kotlin-reflect-api"))
 
     testApiJUnit5()
@@ -29,14 +29,10 @@ dependencies {
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
-    testRuntimeOnly(intellijDep()) {
-        includeJars(
-            "jna",
-            "jdom",
-            "trove4j",
-            "intellij-deps-fastutil-8.4.1-4",
-            rootProject = rootProject)
-    }
+    testRuntimeOnly(intellijDependency("jna"))
+    testRuntimeOnly(intellijDependency("jdom"))
+    testRuntimeOnly(intellijDependency("trove4j"))
+    testRuntimeOnly(intellijDependency("intellij-deps-fastutil"))
 
     testRuntimeOnly(toolsJar())
 }

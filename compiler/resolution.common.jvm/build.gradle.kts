@@ -9,8 +9,10 @@ dependencies {
     api(project(":compiler:psi"))
     implementation(project(":compiler:util"))
     implementation(commonDep("io.javaslang","javaslang"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all", "trove4j", "guava", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(intellijDependency("asm-all"))
+    compileOnly(intellijDependency("trove4j"))
+    compileOnly(intellijDependency("guava"))
 }
 
 sourceSets {

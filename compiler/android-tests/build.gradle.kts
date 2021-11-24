@@ -26,15 +26,11 @@ dependencies {
 
     testApi(commonDep("junit:junit"))
 
-    testApi(intellijDep()) { includeJars("util", "idea", "idea_rt", rootProject = rootProject) }
-    testApi(intellijDep()) { includeJars("groovy", rootProject = rootProject) }
-
-    testApi(intellijPluginDep("java")) { includeJars("jps-builders") }
-    testApi(jpsStandalone()) { includeJars("jps-model") }
+    testApi(jpsModel())
     testApi(jpsBuildTest())
 
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijDep()) { includeJars("jna", rootProject = rootProject) }
+    testRuntimeOnly(intellijCore())
+    testRuntimeOnly(intellijDependency("jna"))
 
     testApi("org.junit.platform:junit-platform-launcher:${commonVer("org.junit.platform", "")}")
 }

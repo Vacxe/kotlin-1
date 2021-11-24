@@ -11,8 +11,10 @@ dependencies {
     api("javax.annotation:jsr250-api:1.0")
     api(project(":compiler:frontend"))
     api(project(":compiler:resolution.common.jvm"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all", "trove4j", "guava", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(intellijDependency("asm-all"))
+    compileOnly(intellijDependency("trove4j"))
+    compileOnly(intellijDependency("guava"))
 }
 
 sourceSets {

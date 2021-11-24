@@ -27,19 +27,13 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(project(":kotlin-preloader"))
     testApi(commonDep("com.android.tools:r8"))
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCore())
 
-    testApi(intellijDep()) {
-        includeJars(
-            "guava",
-            "trove4j",
-            "asm-all",
-            "log4j",
-            "jdom",
-            rootProject = rootProject
-        )
-        isTransitive = false
-    }
+    testApi(intellijDependency("guava"))
+    testApi(intellijDependency("trove4j"))
+    testApi(intellijDependency("asm-all"))
+    testApi(intellijDependency("log4j"))
+    testApi(intellijDependency("jdom"))
 }
 
 sourceSets {

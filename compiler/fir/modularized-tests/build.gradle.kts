@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
-
 /*
  * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
@@ -15,15 +13,9 @@ repositories {
 }
 
 dependencies {
-    testApi(intellijCoreDep()) { includeJars("intellij-core")}
-    testApi(intellijDep()) {
-        includeJars("extensions", "idea_rt", "util", "asm-all", "jna", rootProject = rootProject)
-    }
-
-    testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
+    testApi(intellijCore())
 
     testRuntimeOnly("xerces:xercesImpl:2.12.0")
-    testRuntimeOnly(intellijPluginDep("java"))
 
     testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))

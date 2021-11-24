@@ -13,7 +13,7 @@ val layoutLib by configurations.creating
 val layoutLibApi by configurations.creating
 
 dependencies {
-    testApi(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCore())
 
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
@@ -23,8 +23,8 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:ir.tree.impl"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(intellijDependency("asm-all"))
 
     testApiJUnit5()
 
@@ -42,8 +42,6 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
 
     testApi(commonDep("junit:junit"))
-
-    testRuntimeOnly(intellijPluginDep("junit"))
 
     robolectricClasspath(commonDep("org.robolectric", "robolectric"))
     robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-1")

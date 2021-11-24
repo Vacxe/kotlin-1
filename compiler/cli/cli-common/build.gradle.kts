@@ -10,8 +10,9 @@ dependencies {
     api(project(":js:js.config"))
     api(project(":native:kotlin-native-utils"))
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
+    compileOnly(intellijCore())
+    compileOnly(intellijDependency("guava"))
+    compileOnly(intellijDependency("asm-all"))
 }
 
 sourceSets {

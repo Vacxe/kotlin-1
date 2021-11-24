@@ -16,8 +16,8 @@ dependencies {
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(project(":daemon-common-new"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("trove4j") }
+    compileOnly(intellijCore())
+    compileOnly(intellijDependency("trove4j"))
 
     runtimeOnly(project(":kotlin-reflect"))
 

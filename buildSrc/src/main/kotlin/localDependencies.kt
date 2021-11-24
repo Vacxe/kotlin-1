@@ -21,7 +21,10 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
+import org.gradle.internal.impldep.org.eclipse.jgit.lib.ObjectChecker.type
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.project
+import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToElasticSearch.url
 import java.io.File
 
 private fun Project.kotlinBuildLocalDependenciesDir(): File =
@@ -52,6 +55,9 @@ fun Project.intellijSdkVersionForIde(): String? {
     return rootProject.findProperty("versions.intellijSdk.forIde.$majorVersion") as? String
 }
 
+val Project.intellijVersion
+    get() = rootProject.extra["versions.intellijSdk"]
+
 fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactRepository = ivy {
     val baseDir = project.kotlinBuildLocalRepoDir()
     url = baseDir.toURI()
@@ -80,9 +86,36 @@ fun Project.intellijDep(module: String? = null, forIde: Boolean = false) =
 
 fun Project.intellijCoreDep() = "kotlin.build:intellij-core:${rootProject.extra["versions.intellijSdk"]}"
 
-fun Project.jpsStandalone() = "kotlin.build:jps-standalone:${rootProject.extra["versions.intellijSdk"]}"
+fun Project.intellijCore() = dependencies.project(":dependencies:intellij-core")
 
-fun Project.jpsBuildTest() = "com.jetbrains.intellij.idea:jps-build-test:${rootProject.extra["versions.intellijSdk"]}"
+fun Project.intellijDependency(module: String): String {
+    val organisation = when (module) {
+        "guava" -> "com.google.guava"
+        "streamex" -> "one.util"
+        "jna", "jna-platform" -> "net.java.dev.jna"
+        "lz4-java" -> "org.lz4"
+        "oro" -> "oro"
+        "commons-lang" -> "commons-lang"
+        "gson" -> "com.google.code.gson"
+        "groovy", "groovy-xml" -> "org.codehaus.groovy"
+        "serviceMessages" -> "org.jetbrains.teamcity"
+        "intellij-deps-fastutil" -> "org.jetbrains.intellij.deps.fastutil"
+        else -> "org.jetbrains.intellij.deps"
+    }
+
+    if (!rootProject.extra.has("versions.$module"))
+        error("$module version is missing in versions.properties")
+
+    val version = rootProject.extra.get("versions.$module")
+    return "$organisation:$module:$version"
+}
+
+fun Project.jpsModel() = "com.jetbrains.intellij.platform:jps-model:$intellijVersion"
+fun Project.jpsModelSerialization() = "com.jetbrains.intellij.platform:jps-model-serialization:$intellijVersion"
+fun Project.jpsModelImpl() = "com.jetbrains.intellij.platform:jps-model-impl:$intellijVersion"
+fun Project.jpsBuildTest() = "com.jetbrains.intellij.idea:jps-build-test:$intellijVersion"
+fun Project.intellijPlatformUtil() = "com.jetbrains.intellij.platform:util:$intellijVersion"
+fun Project.intellijJavaRt() = "com.jetbrains.intellij.java:java-rt:$intellijVersion"
 
 /**
  * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).
@@ -129,12 +162,5 @@ object IntellijRootUtils {
         )
     }
 }
-
-@Suppress("UNCHECKED_CAST")
-fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilterPredicate: (String) -> Boolean = { true }): Unit =
-    includeJars(
-        *(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter(jarsFilterPredicate).toTypedArray(),
-        rootProject = project.rootProject
-    )
 
 fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
