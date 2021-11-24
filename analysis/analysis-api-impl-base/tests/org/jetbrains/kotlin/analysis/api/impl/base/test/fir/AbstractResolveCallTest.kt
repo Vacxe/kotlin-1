@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.fir
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.calls.KtBoundSymbol
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
-import org.jetbrains.kotlin.analysis.api.calls.KtDelegatedConstructorCallKind
+import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
@@ -23,9 +22,8 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import kotlin.reflect.KProperty1
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.javaGetter
 
 abstract class AbstractResolveCallTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleModuleTest(configurator) {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
@@ -59,8 +57,9 @@ abstract class AbstractResolveCallTest(configurator: FrontendApiTestConfigurator
 }
 
 private fun KtAnalysisSession.stringRepresentation(call: KtCallInfo): String {
-    fun Any.stringValue(substitutor: KtSubstitutor): String {
-        fun KtType.render() = substitutor.substituteOrSelf(this).asStringForDebugging().replace('/', '.')
+    fun Any.stringValue(): String {
+        fun KtType.render() = asStringForDebugging().replace('/', '.')
+        fun String.indented() = replace("\n", "\n  ")
         return when (this) {
             is KtFunctionLikeSymbol -> buildString {
                 append(
@@ -84,44 +83,56 @@ private fun KtAnalysisSession.stringRepresentation(call: KtCallInfo): String {
                     append("<dispatch receiver>: ${dispatchReceiverType.render()}")
                     if (valueParameters.isNotEmpty()) append(", ")
                 }
-                valueParameters.joinTo(this) { it.stringValue(substitutor) }
+                valueParameters.joinTo(this) { it.stringValue() }
                 append(")")
                 append(": ${returnType.render()}")
             }
             is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
             is KtTypeParameterSymbol -> this.nameOrAnonymous.asString()
             is KtVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
+            is KtSymbol -> this.render()
             is Boolean -> toString()
-            is Map<*, *> -> entries.joinToString(
-                prefix = "{ ",
-                postfix = " }"
-            ) { (k, v) -> "${k?.stringValue(substitutor)} -> (${v?.stringValue(substitutor)})" }
-            is KtExpression -> this.text
-            is KtDelegatedConstructorCallKind -> toString()
+            is Map<*, *> -> if (isEmpty()) "{}" else entries.joinToString(
+                separator = ",\n  ",
+                prefix = "{\n  ",
+                postfix = "\n}"
+            ) { (k, v) -> "${k?.stringValue()?.indented()} -> (${v?.stringValue()?.indented()})" }
+            is Collection<*> -> if (isEmpty()) "[]" else joinToString(
+                separator = ",\n  ",
+                prefix = "[\n  ",
+                postfix = "\n]"
+            ) {
+                it?.stringValue()?.indented() ?: "null"
+            }
+            is PsiElement -> this.text
             is KtSubstitutor.Empty -> "<empty substitutor>"
             is KtMapBackedSubstitutor -> {
                 val mappingText = getAsMap().entries
-                    .joinToString(prefix = "{", postfix = "}") { (k, v) -> k.stringValue(substitutor) + " = " + v.asStringForDebugging() }
+                    .joinToString(prefix = "{", postfix = "}") { (k, v) -> k.stringValue() + " = " + v.asStringForDebugging() }
                 "<map substitutor: $mappingText>"
             }
             is KtSubstitutor -> "<complex substitutor>"
+            is KtDiagnostic -> "$severity<$factoryName: $defaultMessage>"
+            is KtType -> render()
+            is Enum<*> -> name
             else -> buildString {
-                val substitutorToUse = if (this@stringValue is KtBoundSymbol<*>) this@stringValue.substitutor else substitutor
-                val clazz = this::class
+                val clazz = this@stringValue::class
                 append(clazz.simpleName!!)
                 appendLine(":")
-                val propertyByName = clazz.memberProperties.associateBy(KProperty1<*, *>::name)
-                clazz.primaryConstructor!!.parameters
-                    .filter { it.name != "token" }
-                    .joinTo(this, separator = "\n") { parameter ->
-                        val name = parameter.name!!.removePrefix("_")
-                        val value = propertyByName[name]!!.javaGetter!!(call)?.stringValue(substitutorToUse)?.replace("\n", "\n  ")
+                clazz.memberProperties
+                    .filter { it.name != "token" && it.visibility == KVisibility.PUBLIC }
+                    .joinTo(this, separator = "\n  ", prefix = "  ") { property ->
+                        val name = property.name
+
+                        @Suppress("UNCHECKED_CAST")
+                        val value =
+                            (property as KProperty1<Any, *>).get(this@stringValue)?.stringValue()?.indented()
                         "$name = $value"
                     }
             }
         }
     }
 
-    return call.stringValue(KtSubstitutor.Empty(token))
+    return call.stringValue()
 }
 

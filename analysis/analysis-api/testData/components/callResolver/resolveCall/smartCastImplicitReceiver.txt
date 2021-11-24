@@ -1,0 +1,13 @@
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtSmartCastedReceiverValue:
+        original = KtImplicitReceiverValue:
+          symbol = extension receiver of fun kotlin.Any.test()
+        smartCastType = kotlin.String
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val length: kotlin.Int
+    simpleAccess = Read:
