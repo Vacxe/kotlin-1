@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.fir
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.calls.KtCall
+import org.jetbrains.kotlin.analysis.api.calls.KtBoundSymbol
+import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtDelegatedConstructorCallKind
-import org.jetbrains.kotlin.analysis.api.calls.KtErrorCallTarget
-import org.jetbrains.kotlin.analysis.api.calls.KtSuccessCallTarget
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
@@ -41,8 +40,8 @@ abstract class AbstractResolveCallTest(configurator: FrontendApiTestConfigurator
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
-    private fun KtAnalysisSession.resolveCall(element: PsiElement): KtCall? = when (element) {
-        is KtValueArgument -> resolveCall(element.getArgumentExpression()!!)
+    private fun KtAnalysisSession.resolveCall(element: PsiElement): KtCallInfo? = when (element) {
+        is KtValueArgument -> element.getArgumentExpression()?.resolveCall()
         is KtDeclarationModifierList -> {
             val annotationEntry = element.annotationEntries.singleOrNull()
                 ?: error("Only single annotation entry is supported for now")
@@ -53,74 +52,76 @@ abstract class AbstractResolveCallTest(configurator: FrontendApiTestConfigurator
                 ?: error("Only single annotation entry is supported for now")
             annotationEntry.resolveCall()
         }
-        is KtSimpleNameExpression -> element.resolveAccessorCall()
-        is KtElement -> element.resolveCallIfPossible()
+        is KtElement -> element.resolveCall()
         else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCall()")
     }
 
 }
 
-private fun KtAnalysisSession.stringRepresentation(call: KtCall): String {
-    fun KtType.render() = call.substitutor.substituteOrSelf(this).asStringForDebugging().replace('/', '.')
-    fun Any.stringValue(): String = when (this) {
-        is KtFunctionLikeSymbol -> buildString {
-            append(
-                when (this@stringValue) {
-                    is KtFunctionSymbol -> callableIdIfNonLocal ?: name
-                    is KtSamConstructorSymbol -> callableIdIfNonLocal ?: name
-                    is KtConstructorSymbol -> "<constructor>"
-                    is KtPropertyGetterSymbol -> callableIdIfNonLocal ?: "<getter>"
-                    is KtPropertySetterSymbol -> callableIdIfNonLocal ?: "<setter>"
-                    else -> error("unexpected symbol kind in KtCall: ${this@stringValue::class.java}")
+private fun KtAnalysisSession.stringRepresentation(call: KtCallInfo): String {
+    fun Any.stringValue(substitutor: KtSubstitutor): String {
+        fun KtType.render() = substitutor.substituteOrSelf(this).asStringForDebugging().replace('/', '.')
+        return when (this) {
+            is KtFunctionLikeSymbol -> buildString {
+                append(
+                    when (this@stringValue) {
+                        is KtFunctionSymbol -> callableIdIfNonLocal ?: name
+                        is KtSamConstructorSymbol -> callableIdIfNonLocal ?: name
+                        is KtConstructorSymbol -> "<constructor>"
+                        is KtPropertyGetterSymbol -> callableIdIfNonLocal ?: "<getter>"
+                        is KtPropertySetterSymbol -> callableIdIfNonLocal ?: "<setter>"
+                        else -> error("unexpected symbol kind in KtCall: ${this@stringValue::class.java}")
+                    }
+                )
+                append("(")
+                (this@stringValue as? KtFunctionSymbol)?.receiverType?.let { receiver ->
+                    append("<extension receiver>: ${receiver.render()}")
+                    if (valueParameters.isNotEmpty()) append(", ")
                 }
-            )
-            append("(")
-            (this@stringValue as? KtFunctionSymbol)?.receiverType?.let { receiver ->
-                append("<extension receiver>: ${receiver.render()}")
-                if (valueParameters.isNotEmpty()) append(", ")
-            }
 
-            @Suppress("DEPRECATION")
-            (this@stringValue as? KtPossibleMemberSymbol)?.getDispatchReceiverType()?.let { dispatchReceiverType ->
-                append("<dispatch receiver>: ${dispatchReceiverType.render()}")
-                if (valueParameters.isNotEmpty()) append(", ")
+                @Suppress("DEPRECATION")
+                (this@stringValue as? KtPossibleMemberSymbol)?.getDispatchReceiverType()?.let { dispatchReceiverType ->
+                    append("<dispatch receiver>: ${dispatchReceiverType.render()}")
+                    if (valueParameters.isNotEmpty()) append(", ")
+                }
+                valueParameters.joinTo(this) { it.stringValue(substitutor) }
+                append(")")
+                append(": ${returnType.render()}")
             }
-            valueParameters.joinTo(this) { it.stringValue() }
-            append(")")
-            append(": ${returnType.render()}")
+            is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
+            is KtTypeParameterSymbol -> this.nameOrAnonymous.asString()
+            is KtVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
+            is Boolean -> toString()
+            is Map<*, *> -> entries.joinToString(
+                prefix = "{ ",
+                postfix = " }"
+            ) { (k, v) -> "${k?.stringValue(substitutor)} -> (${v?.stringValue(substitutor)})" }
+            is KtExpression -> this.text
+            is KtDelegatedConstructorCallKind -> toString()
+            is KtSubstitutor.Empty -> "<empty substitutor>"
+            is KtMapBackedSubstitutor -> {
+                val mappingText = getAsMap().entries
+                    .joinToString(prefix = "{", postfix = "}") { (k, v) -> k.stringValue(substitutor) + " = " + v.asStringForDebugging() }
+                "<map substitutor: $mappingText>"
+            }
+            is KtSubstitutor -> "<complex substitutor>"
+            else -> buildString {
+                val substitutorToUse = if (this@stringValue is KtBoundSymbol<*>) this@stringValue.substitutor else substitutor
+                val clazz = this::class
+                append(clazz.simpleName!!)
+                appendLine(":")
+                val propertyByName = clazz.memberProperties.associateBy(KProperty1<*, *>::name)
+                clazz.primaryConstructor!!.parameters
+                    .filter { it.name != "token" }
+                    .joinTo(this, separator = "\n") { parameter ->
+                        val name = parameter.name!!.removePrefix("_")
+                        val value = propertyByName[name]!!.javaGetter!!(call)?.stringValue(substitutorToUse)?.replace("\n", "\n  ")
+                        "$name = $value"
+                    }
+            }
         }
-        is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
-        is KtTypeParameterSymbol -> this.nameOrAnonymous.asString()
-        is KtVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
-        is KtSuccessCallTarget -> symbol.stringValue()
-        is KtErrorCallTarget -> "ERR<${this.diagnostic.defaultMessage}, [${candidates.joinToString { it.stringValue() }}]>"
-        is Boolean -> toString()
-        is Map<*, *> -> entries.joinToString(prefix = "{ ", postfix = " }") { (k, v) -> "${k?.stringValue()} -> (${v?.stringValue()})" }
-        is KtExpression -> this.text
-        is KtDelegatedConstructorCallKind -> toString()
-        is KtSubstitutor.Empty -> "<empty substitutor>"
-        is KtMapBackedSubstitutor -> {
-            val mappingText = getAsMap().orEmpty().entries
-                .joinToString(prefix = "{", postfix = "}") { (k, v) -> k.stringValue() + " = " + v.asStringForDebugging() }
-            "<map substitutor: $mappingText>"
-        }
-        is KtSubstitutor -> "<complex substitutor>"
-        else -> error("unexpected parameter type ${this::class}")
     }
 
-    val callInfoClass = call::class
-    return buildString {
-        append(callInfoClass.simpleName!!)
-        append(":\n")
-        val propertyByName =
-            callInfoClass.memberProperties.associateBy(KProperty1<*, *>::name)
-        callInfoClass.primaryConstructor!!.parameters
-            .filter { it.name != "token" }
-            .joinTo(this, separator = "\n") { parameter ->
-                val name = parameter.name!!.removePrefix("_")
-                val value = propertyByName[name]!!.javaGetter!!(call)?.stringValue()
-                "$name = $value"
-            }
-    }
+    return call.stringValue(KtSubstitutor.Empty(token))
 }
 
