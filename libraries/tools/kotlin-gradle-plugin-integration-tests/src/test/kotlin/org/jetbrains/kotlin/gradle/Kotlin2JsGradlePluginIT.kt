@@ -1066,4 +1066,41 @@ class GeneralKotlin2JsGradlePluginIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testYarnIgnoreScripts() {
+        with(transformProjectWithPluginsDsl("nodeJsDownload")) {
+            gradleBuildScript().modify {
+                it + "\n" +
+                        """
+                        dependencies {
+                            implementation(npm("puppeteer", "11.0.0"))
+                        }
+                        """.trimIndent()
+            }
+            build("assemble") {
+                assert(
+                    fileInWorkingDir("build/js/node_modules/puppeteer/.local-chromium").exists().not()
+                ) {
+                    "Chromium should not be installed with --ignore-scripts"
+                }
+            }
+            gradleBuildScript().modify {
+                it + "\n" +
+                        """
+                        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().ignoreScripts = false
+                        }
+                        """.trimIndent()
+            }
+
+            build("clean") {}
+
+            build("assemble") {
+                assert(
+                    fileInWorkingDir("build/js/node_modules/puppeteer/.local-chromium").exists()
+                )
+            }
+        }
+    }
 }
