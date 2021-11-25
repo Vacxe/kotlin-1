@@ -41,11 +41,14 @@ public class CharArray(size: Int) {
         storage.fill(size) { init(it) }
     }
 
+    private inline fun <T> checked(index: Int, body: () -> T): T =
+        if (index < 0 || index >= size) throw IndexOutOfBoundsException() else body()
+
     public operator fun get(index: Int): Char =
-        storage.get(index)
+        checked(index) { storage.get(index) }
 
     public operator fun set(index: Int, value: Char) {
-        storage.set(index, value)
+        checked(index) { storage.set(index, value) }
     }
 
     public val size: Int
