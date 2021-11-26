@@ -36,6 +36,7 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
             null
     }
 
-    override fun defaultPlatformRandom(): Random = PlatformThreadLocalRandom()
+    override fun defaultPlatformRandom(): Random =
+        if (sdkIsNullOrAtLeast(24)) PlatformThreadLocalRandom() else super.defaultPlatformRandom()
 
 }

@@ -28,6 +28,20 @@ internal open class PlatformImplementations {
         }
     }
 
+    private object ReflectSdkVersion {
+        @JvmField
+        public val sdkVersion: Int? = try {
+            Class.forName("android.os.Build\$VERSION").getField("SDK_INT").get(null) as? Int
+        } catch (e: ClassNotFoundException) {
+            null
+        } catch (e: NoSuchFieldError) {
+            null
+        }
+    }
+
+    public fun sdkIsNullOrAtLeast(version: Int): Boolean = ReflectSdkVersion.sdkVersion == null || ReflectSdkVersion.sdkVersion >= version
+
+
     public open fun addSuppressed(cause: Throwable, exception: Throwable) {
         ReflectThrowable.addSuppressed?.invoke(cause, exception)
     }
