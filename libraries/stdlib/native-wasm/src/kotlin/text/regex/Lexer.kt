@@ -411,11 +411,8 @@ internal class Lexer(val patternString: String, flags: Int) {
 
     /** Processes an escaped (\x) character in any mode. Returns whether we need to reread the character or not */
     private fun processEscapedChar() : Boolean {
-        lookAhead = if (index < pattern.size - 2) {
-            nextCodePoint()
-        } else {
-            throw PatternSyntaxException("Trailing \\", patternString, curTokenIndex)
-        }
+        if (index >= pattern.size - 2) throw PatternSyntaxException("Trailing \\", patternString, curTokenIndex)
+        lookAhead = nextCodePoint()
 
         // The current code point cannot be a surrogate pair because it is an escaped special one.
         // Cast it to char or just skip it as if we pass through the else branch of the when below.
@@ -502,11 +499,9 @@ internal class Lexer(val patternString: String, flags: Int) {
         var max = -1
 
         // Obtain a min value.
-        var char: Char = if (index < pattern.size) {
-            pattern[nextIndex()]
-        } else {
-            throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
-        }
+        if (index >= pattern.size) throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
+        var char: Char = pattern[nextIndex()]
+
         while (char != '}') {
 
             if (char == ',' && min < 0) {
