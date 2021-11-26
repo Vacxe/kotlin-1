@@ -24,29 +24,6 @@
 @file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
-import kotlin.native.internal.GCUnsafeCall
-
-// Access to the decomposition tables. =========================================================================
-/** Gets canonical class for given codepoint from decomposition mappings table. */
-@GCUnsafeCall("Kotlin_text_regex_getCanonicalClassInternal")
-external private fun getCanonicalClassInternal(ch: Int): Int
-
-/** Check if the given character is in table of single decompositions. */
-@GCUnsafeCall("Kotlin_text_regex_hasSingleCodepointDecompositionInternal")
-external private fun hasSingleCodepointDecompositionInternal(ch: Int): Boolean
-
-/** Returns a decomposition for a given codepoint. */
-@GCUnsafeCall("Kotlin_text_regex_getDecompositionInternal")
-external private fun getDecompositionInternal(ch: Int): IntArray?
-
-/**
- * Decomposes the given string represented as an array of codepoints. Saves the decomposition into [outputCodepoints] array.
- * Returns the length of the decomposition.
- */
-@GCUnsafeCall("Kotlin_text_regex_decomposeString")
-external private fun decomposeString(inputCodePoints: IntArray, inputLength: Int, outputCodePoints: IntArray): Int
-// =============================================================================================================
-
 /**
  * This is base class for special tokens like character classes and quantifiers.
  */
@@ -434,11 +411,8 @@ internal class Lexer(val patternString: String, flags: Int) {
 
     /** Processes an escaped (\x) character in any mode. Returns whether we need to reread the character or not */
     private fun processEscapedChar() : Boolean {
-        lookAhead = if (index < pattern.size - 2) {
-            nextCodePoint()
-        } else {
-            throw PatternSyntaxException("Trailing \\", patternString, curTokenIndex)
-        }
+        if (index >= pattern.size - 2) throw PatternSyntaxException("Trailing \\", patternString, curTokenIndex)
+        lookAhead = nextCodePoint()
 
         // The current code point cannot be a surrogate pair because it is an escaped special one.
         // Cast it to char or just skip it as if we pass through the else branch of the when below.
@@ -525,11 +499,9 @@ internal class Lexer(val patternString: String, flags: Int) {
         var max = -1
 
         // Obtain a min value.
-        var char: Char = if (index < pattern.size) {
-            pattern[nextIndex()]
-        } else {
-            throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
-        }
+        if (index >= pattern.size) throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
+        var char: Char = pattern[nextIndex()]
+
         while (char != '}') {
 
             if (char == ',' && min < 0) {

@@ -55,7 +55,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
     internal var alt: Boolean = false
     internal var altSurrogates: Boolean = false
 
-    internal val lowHighSurrogates = BitSet(SURROGATE_CARDINALITY) // Bit set for surrogates?
+    internal val lowHighSurrogates = BitSetImpl(SURROGATE_CARDINALITY) // Bit set for surrogates?
 
     /*
      * Indicates if this class may contain supplementary Unicode codepoints.
@@ -69,10 +69,10 @@ internal abstract class AbstractCharClass : SpecialToken() {
     open fun contains(ch: Char): Boolean = contains(ch.toInt())
 
     /**
-     * Returns BitSet representing this character class or `null`
+     * Returns BitSetImpl representing this character class or `null`
      * if this character class does not have character representation;
      */
-    open internal val bits: BitSet?
+    open internal val bits: BitSetImpl?
         get() = null
 
     fun hasLowHighSurrogates(): Boolean {

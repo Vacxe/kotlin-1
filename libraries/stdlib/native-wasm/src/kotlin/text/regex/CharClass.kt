@@ -25,7 +25,7 @@ package kotlin.text.regex
 /**
  * User defined character classes (e.g. [abef]).
  */
-// TODO: replace the implementation with one using BitSet for first 256 symbols and a hash table / tree for the rest of UTF.
+// TODO: replace the implementation with one using BitSetImpl for first 256 symbols and a hash table / tree for the rest of UTF.
 internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = false)  : AbstractCharClass()  {
 
     var invertedSurrogates = false
@@ -41,15 +41,15 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
 
     var hideBits = false
 
-    internal var bits_ = BitSet()
-    override val bits: BitSet?
+    internal var bits_ = BitSetImpl()
+    override val bits: BitSetImpl?
         get() {
             if (hideBits)
                 return null
             return bits_
         }
 
-    var nonBitSet: AbstractCharClass? = null
+    var nonBitSetImpl: AbstractCharClass? = null
 
     private val Int.asciiSupplement: Int
         get() = when {
@@ -65,7 +65,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
     }
 
     /*
-     * We can use this method safely even if nonBitSet != null
+     * We can use this method safely even if nonBitSetImpl != null
      * due to specific of range constructions in regular expressions.
      */
     fun add(ch: Int): CharClass {
@@ -158,10 +158,10 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
         } else {
             val curAlt = alt
 
-            if (nonBitSet == null) {
+            if (nonBitSetImpl == null) {
 
                 if (curAlt && !inverted && bits_.isEmpty) {
-                    nonBitSet = object : AbstractCharClass() {
+                    nonBitSetImpl = object : AbstractCharClass() {
                         override operator fun contains(ch: Int): Boolean {
                             return another.contains(ch)
                         }
@@ -174,13 +174,13 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                      * the formula a ^ b == !a ^ !b.
                      */
                     if (curAlt) {
-                        nonBitSet = object : AbstractCharClass() {
+                        nonBitSetImpl = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return !(curAlt xor bits_.get(ch) || curAlt xor inverted xor another.contains(ch))
                             }
                         }
                     } else {
-                        nonBitSet = object : AbstractCharClass() {
+                        nonBitSetImpl = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return curAlt xor bits_.get(ch) || curAlt xor inverted xor another.contains(ch)
                             }
@@ -190,16 +190,16 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
 
                 hideBits = true
             } else {
-                val nb = nonBitSet
+                val nb = nonBitSetImpl
 
                 if (curAlt) {
-                    nonBitSet = object : AbstractCharClass() {
+                    nonBitSetImpl = object : AbstractCharClass() {
                         override operator fun contains(ch: Int): Boolean {
                             return !(curAlt xor (nb!!.contains(ch) || another.contains(ch)))
                         }
                     }
                 } else {
-                    nonBitSet = object : AbstractCharClass() {
+                    nonBitSetImpl = object : AbstractCharClass() {
                         override operator fun contains(ch: Int): Boolean {
                             return curAlt xor (nb!!.contains(ch) || another.contains(ch))
                         }
@@ -303,17 +303,17 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
         } else {
             val curAlt = alt
 
-            if (nonBitSet == null) {
+            if (nonBitSetImpl == null) {
 
                 if (!inverted && bits_.isEmpty) {
                     if (curAlt) {
-                        nonBitSet = object : AbstractCharClass() {
+                        nonBitSetImpl = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return !another.contains(ch)
                             }
                         }
                     } else {
-                        nonBitSet = object : AbstractCharClass() {
+                        nonBitSetImpl = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return another.contains(ch)
                             }
@@ -322,13 +322,13 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                 } else {
 
                     if (curAlt) {
-                        nonBitSet = object : AbstractCharClass() {
+                        nonBitSetImpl = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return !(another.contains(ch) || curAlt xor bits_.get(ch))
                             }
                         }
                     } else {
-                        nonBitSet = object : AbstractCharClass() {
+                        nonBitSetImpl = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return another.contains(ch) || curAlt xor bits_.get(ch)
                             }
@@ -337,16 +337,16 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                 }
                 hideBits = true
             } else {
-                val nb = nonBitSet
+                val nb = nonBitSetImpl
 
                 if (curAlt) {
-                    nonBitSet = object : AbstractCharClass() {
+                    nonBitSetImpl = object : AbstractCharClass() {
                         override operator fun contains(ch: Int): Boolean {
                             return !(curAlt xor nb!!.contains(ch) || another.contains(ch))
                         }
                     }
                 } else {
-                    nonBitSet = object : AbstractCharClass() {
+                    nonBitSetImpl = object : AbstractCharClass() {
                         override operator fun contains(ch: Int): Boolean {
                             return curAlt xor nb!!.contains(ch) || another.contains(ch)
                         }
@@ -415,17 +415,17 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
         } else {
             val curAlt = alt
 
-            if (nonBitSet == null) {
+            if (nonBitSetImpl == null) {
 
                 if (!inverted && bits_.isEmpty) {
                     if (curAlt) {
-                        nonBitSet = object : AbstractCharClass() {
+                        nonBitSetImpl = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return !another.contains(ch)
                             }
                         }
                     } else {
-                        nonBitSet = object : AbstractCharClass() {
+                        nonBitSetImpl = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return another.contains(ch)
                             }
@@ -434,13 +434,13 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                 } else {
 
                     if (curAlt) {
-                        nonBitSet = object : AbstractCharClass() {
+                        nonBitSetImpl = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return !(another.contains(ch) && curAlt xor bits_.get(ch))
                             }
                         }
                     } else {
-                        nonBitSet = object : AbstractCharClass() {
+                        nonBitSetImpl = object : AbstractCharClass() {
                             override operator fun contains(ch: Int): Boolean {
                                 return another.contains(ch) && curAlt xor bits_.get(ch)
                             }
@@ -449,16 +449,16 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                 }
                 hideBits = true
             } else {
-                val nb = nonBitSet
+                val nb = nonBitSetImpl
 
                 if (curAlt) {
-                    nonBitSet = object : AbstractCharClass() {
+                    nonBitSetImpl = object : AbstractCharClass() {
                         override operator fun contains(ch: Int): Boolean {
                             return !(curAlt xor nb!!.contains(ch) && another.contains(ch))
                         }
                     }
                 } else {
-                    nonBitSet = object : AbstractCharClass() {
+                    nonBitSetImpl = object : AbstractCharClass() {
                         override operator fun contains(ch: Int): Boolean {
                             return curAlt xor nb!!.contains(ch) && another.contains(ch)
                         }
@@ -478,10 +478,10 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
      * @return `true` if character class contains symbol specified;
      *     */
     override operator fun contains(ch: Int): Boolean {
-        if (nonBitSet == null) {
+        if (nonBitSetImpl == null) {
             return alt xor bits_.get(ch)
         } else {
-            return alt xor nonBitSet!!.contains(ch)
+            return alt xor nonBitSetImpl!!.contains(ch)
         }
     }
 
@@ -489,7 +489,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
     override val instance: AbstractCharClass
         get() {
 
-            if (nonBitSet == null) {
+            if (nonBitSetImpl == null) {
                 val bs = bits
 
                 val res = object : AbstractCharClass() {
