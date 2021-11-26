@@ -147,6 +147,16 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
         public const val MIN_SUPPLEMENTARY_CODE_POINT: Int = 0x10000
 
         /**
+         * The minimum value of a Unicode code point.
+         */
+        public const val MIN_CODE_POINT = 0x000000
+
+        /**
+         * The maximum value of a Unicode code point.
+         */
+        public const val MAX_CODE_POINT = 0X10FFFF
+
+        /**
          * The minimum radix available for conversion to and from strings.
          */
         public const val MIN_RADIX: Int = 2
