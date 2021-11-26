@@ -75,19 +75,19 @@ class GroupingTest {
 
     inline fun <T, K : Comparable<K>> maxOfBy(a: T, b: T, keySelector: (T) -> K) = if (keySelector(a) >= keySelector(b)) a else b
 
-    @Test fun reduce() {
-        val elements = listOf("foo", "bar", "flea", "zoo", "biscuit")
-        fun Char.isVowel() = this in "aeiou"
-        fun String.countVowels() = count(Char::isVowel)
-        val maxVowels = elements.groupingBy { it.first() }.reduce { _, a, b -> maxOfBy(a, b, String::countVowels) }
-
-        assertEquals(mapOf('f' to "foo", 'b' to "biscuit", 'z' to "zoo"), maxVowels)
-
-        val elements2 = listOf("bar", "z", "fork")
-        val concats = elements2.groupingBy { it.first() }.reduceTo(HashMap(maxVowels)) { _, acc, e -> acc + e }
-
-        assertEquals(mapOf('f' to "foofork", 'b' to "biscuitbar", 'z' to "zooz"), concats)
-    }
+//    @Test fun reduce() {
+//        val elements = listOf("foo", "bar", "flea", "zoo", "biscuit")
+//        fun Char.isVowel() = this in "aeiou"
+//        fun String.countVowels() = count(Char::isVowel)
+//        val maxVowels = elements.groupingBy { it.first() }.reduce { _, a, b -> maxOfBy(a, b, String::countVowels) }
+//
+//        assertEquals(mapOf('f' to "foo", 'b' to "biscuit", 'z' to "zoo"), maxVowels)
+//
+//        val elements2 = listOf("bar", "z", "fork")
+//        val concats = elements2.groupingBy { it.first() }.reduceTo(HashMap(maxVowels)) { _, acc, e -> acc + e }
+//
+//        assertEquals(mapOf('f' to "foofork", 'b' to "biscuitbar", 'z' to "zooz"), concats)
+//    }
 
     @Test fun countEach() {
         val elements = listOf("foo", "bar", "flea", "zoo", "biscuit")
