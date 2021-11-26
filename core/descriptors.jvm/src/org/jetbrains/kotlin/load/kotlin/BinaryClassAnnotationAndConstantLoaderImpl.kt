@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
@@ -119,7 +120,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
 
             override fun visitArrayValue(name: Name?, elements: ArrayList<ConstantValue<*>>) {
                 defaultValue = ArrayValue(elements.compact()) { moduleDescriptor ->
-                    guessArrayType(elements, moduleDescriptor)
+                    guessArrayType(moduleDescriptor)
                 }
             }
 
@@ -128,19 +129,26 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             private fun guessArrayType(
-                elements: ArrayList<ConstantValue<*>>,
                 moduleDescriptor: ModuleDescriptor
             ): KotlinType {
-                if (elements.isNotEmpty())
-                    return moduleDescriptor.builtIns.getArrayType(Variance.INVARIANT, elements.first().getType(moduleDescriptor))
-
-                val desc = methodSignature.signature.substringAfterLast(')').removePrefix("[")
-                // check for primitive
-                JvmPrimitiveType.getByDesc(desc)?.let { return moduleDescriptor.builtIns.getPrimitiveArrayKotlinType(it.primitiveType) }
-                // String, enum or another annotation
-                val targetId = ClassId.fromString(desc.removePrefix("L").removeSuffix(";"))
-                val loadedClass = resolveClass(targetId)
-                return moduleDescriptor.builtIns.getArrayType(Variance.INVARIANT, loadedClass.defaultType)
+                val elementDesc = methodSignature.signature.substringAfterLast(')').removePrefix("[")
+                // Some fast-path guesses
+                JvmPrimitiveType.getByDesc(elementDesc)
+                    ?.let { return moduleDescriptor.builtIns.getPrimitiveArrayKotlinType(it.primitiveType) }
+                if (elementDesc == "Ljava/lang/String;") return moduleDescriptor.builtIns.getArrayType(
+                    Variance.INVARIANT,
+                    moduleDescriptor.builtIns.stringType
+                )
+                // Slow path resolving @JvmName
+                val propertiesNames = moduleDescriptor.findNonGenericClassAcrossDependencies(annotationClass.classId, notFoundClasses)
+                    .unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<PropertyDescriptor>()
+                    .filter { prop ->
+                        val name = prop.getter?.let { DescriptorUtils.getJvmName(it) ?: prop.name.asString() }
+                        name == methodSignature.signature.substringBefore('(')
+                    }
+                val requiredProp = propertiesNames.singleOrNull()
+                    ?: error("Signature ${methodSignature.signature} does not belong to class ${annotationClass.classId} or multiple duplicates found")
+                return requiredProp.type
             }
         }
     }
