@@ -4494,6 +4494,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt48987.kt")
+            public void testKt48987() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/kt48987.kt");
+            }
+
+            @Test
             @TestMetadata("lambdaToUnitCast.kt")
             public void testLambdaToUnitCast() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");
