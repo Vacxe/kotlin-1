@@ -243,6 +243,8 @@ enum class LanguageFeature(
     EliminateAmbiguitiesOnInheritedSamInterfaces(KOTLIN_1_7),
     ConsiderExtensionReceiverFromConstrainsInLambda(KOTLIN_1_7, kind = BUG_FIX), // KT-49832
     ProperInternalVisibilityCheckInImportingScope(KOTLIN_1_7, kind = BUG_FIX),
+    ProhibitJavaSamInterfaceConstructorReference(KOTLIN_1_7),
+    AllowKotlinFunInterfaceConstructorReference(KOTLIN_1_7),
 
     // 1.8
 

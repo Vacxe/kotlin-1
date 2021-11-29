@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.utils
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -50,4 +51,8 @@ inline val FirDeclaration.isFromLibrary: Boolean
 inline val FirDeclaration.isSynthetic: Boolean
     get() = origin == FirDeclarationOrigin.Synthetic
 
+inline val FirDeclaration.isJavaOrEnhancement: Boolean
+    get() = origin == FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
+inline val FirBasedSymbol<*>.isJavaOrEnhancement: Boolean
+    get() = origin == FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
 

@@ -10618,6 +10618,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("funInterfaceConstructorReferences_after.kt")
+            public void testFunInterfaceConstructorReferences_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/funInterface/funInterfaceConstructorReferences_after.kt");
+            }
+
+            @Test
+            @TestMetadata("funInterfaceConstructorReferences_before.kt")
+            public void testFunInterfaceConstructorReferences_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/funInterface/funInterfaceConstructorReferences_before.kt");
+            }
+
+            @Test
             @TestMetadata("funInterfaceConversionOnReceiver.kt")
             public void testFunInterfaceConversionOnReceiver() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/funInterface/funInterfaceConversionOnReceiver.kt");
@@ -10657,12 +10669,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("noCompatibilityResolveForFunInterfaces.kt")
             public void testNoCompatibilityResolveForFunInterfaces() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/funInterface/noCompatibilityResolveForFunInterfaces.kt");
-            }
-
-            @Test
-            @TestMetadata("prohibitFunInterfaceConstructorReferences.kt")
-            public void testProhibitFunInterfaceConstructorReferences() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/funInterface/prohibitFunInterfaceConstructorReferences.kt");
             }
 
             @Test
