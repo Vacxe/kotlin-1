@@ -5,7 +5,10 @@ plugins {
 
 dependencies {
     implementation(kotlinStdlib("jdk8"))
-    implementation(intellijDep())
+    implementation(jpsModel())
+    implementation(jpsModelImpl())
+    implementation(jpsModelSerialization())
+    implementation(intellijDependency("gson"))
 }
 
 sourceSets {
