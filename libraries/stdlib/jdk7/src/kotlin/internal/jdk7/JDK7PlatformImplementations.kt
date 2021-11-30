@@ -10,6 +10,18 @@ import kotlin.internal.PlatformImplementations
 
 internal open class JDK7PlatformImplementations : PlatformImplementations() {
 
+    private object ReflectSdkVersion {
+        @JvmField
+        public val sdkVersion: Int? = try {
+            Class.forName("android.os.Build\$VERSION").getField("SDK_INT").get(null) as? Int
+        } catch (e: Throwable) {
+            null
+        }?.takeIf { it > 0 }
+    }
+
+    private fun sdkIsNullOrAtLeast(version: Int): Boolean = ReflectSdkVersion.sdkVersion == null || ReflectSdkVersion.sdkVersion >= version
+
+
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     override fun addSuppressed(cause: Throwable, exception: Throwable) =
         if (sdkIsNullOrAtLeast(19))
