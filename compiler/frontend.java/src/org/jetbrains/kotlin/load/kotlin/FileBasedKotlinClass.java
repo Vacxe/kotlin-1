@@ -216,7 +216,8 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(String name, @NotNull String desc) {
-                AnnotationArgumentVisitor arv = v.visitAnnotation(name == null ? null : Name.identifier(name), resolveNameByDesc(desc, innerClasses));
+                AnnotationArgumentVisitor arv =
+                        v.visitAnnotation(name == null ? null : Name.identifier(name), resolveNameByDesc(desc, innerClasses));
                 return arv == null ? null : convertAnnotationVisitor(arv, innerClasses);
             }
 

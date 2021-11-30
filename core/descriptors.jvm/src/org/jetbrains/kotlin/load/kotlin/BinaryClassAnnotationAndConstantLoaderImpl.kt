@@ -153,7 +153,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
         }
     }
 
-    abstract inner class AbstractAnnotationArgumentVisitor : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+    private abstract inner class AbstractAnnotationArgumentVisitor : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
         abstract fun visitConstantValue(name: Name?, value: ConstantValue<*>)
         abstract override fun visitEnd()
         abstract fun visitArrayValue(name: Name?, elements: ArrayList<ConstantValue<*>>)

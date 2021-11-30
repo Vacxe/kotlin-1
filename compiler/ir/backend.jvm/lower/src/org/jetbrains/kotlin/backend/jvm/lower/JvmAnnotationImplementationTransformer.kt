@@ -140,7 +140,7 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
             val defaultExpression = property.backingField?.initializer?.expression
             val newDefaultValue: IrExpressionBody? =
                 if (defaultExpression is IrGetValue && defaultExpression.symbol.owner is IrValueParameter) {
-                    // INITIALIZE_PROPERTY_FROM_PARAMETER, could also check origin, not sure what is more reliable
+                    // INITIALIZE_PROPERTY_FROM_PARAMETER
                     (defaultExpression.symbol.owner as IrValueParameter).defaultValue
                 } else if (defaultExpression != null) {
                     property.backingField!!.initializer

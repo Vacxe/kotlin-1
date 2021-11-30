@@ -20,6 +20,11 @@ annotation class OtherArrays(
     val namesArray: Array<JvmName> = [JvmName("foo")]
 )
 
+// Uncomment when KT-49998 is resolved
+//annotation class UnsignedValue(
+//    val uint: UInt = 2147483657U // Int.MAX_VALUE + 10
+//)
+
 // MODULE: app(lib)
 // FILE: app.kt
 
@@ -38,6 +43,7 @@ class C {
     fun two(): Metadata = Metadata()
     fun three(): Deprecated = Deprecated("foo")
     fun four(): OtherArrays = OtherArrays()
+//    fun five(): UnsignedValue = UnsignedValue()
 }
 
 fun box(): String {
@@ -55,5 +61,6 @@ fun box(): String {
         """@a.OtherArrays(annotationsArray=[], doublesArray=[], enumArray=[], namesArray=[@kotlin.jvm.JvmName(name=foo)])""",
         C().four().toString()
     )
+//    assertEquals(Int.MAX_VALUE.toUInt() + 10.toUInt(), C().five().uint)
     return "OK"
 }
