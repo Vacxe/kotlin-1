@@ -21,7 +21,7 @@ dependencies {
     compileOnly(intellijDependency("asm-all"))
 
     // FIXME: drop after removing references to LocalFileSystem they don't exist in intellij-core
-    compileOnly(intellijDep()) { includeJars("platform-api") }
+//    compileOnly(intellijDep()) { includeJars("platform-api") }
 
     runtimeOnly(project(":kotlin-reflect"))
 

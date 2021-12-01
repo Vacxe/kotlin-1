@@ -10,7 +10,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.openapi.vfs.LocalFileSystem
+//import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -312,8 +312,8 @@ fun SourceCode.getVirtualFile(definition: ScriptDefinition): VirtualFile {
         return virtualFile
     }
     if (this is FileScriptSource) {
-        val vFile = LocalFileSystem.getInstance().findFileByIoFile(file)
-        if (vFile != null) return vFile
+//        val vFile = LocalFileSystem.getInstance().findFileByIoFile(file)
+//        if (vFile != null) return vFile
     }
     val scriptName = withCorrectExtension(name ?: definition.defaultClassName, definition.fileExtension)
     val scriptPath = when (this) {
