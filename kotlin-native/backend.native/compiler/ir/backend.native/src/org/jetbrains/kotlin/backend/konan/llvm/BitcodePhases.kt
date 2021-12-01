@@ -365,7 +365,9 @@ internal val rewriteExternalCallsCheckerGlobals = makeKonanModuleOpPhase(
 internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
         name = "BitcodeOptimization",
         description = "Optimize bitcode",
-        op = { context, _ -> runLlvmOptimizationPipeline(context) }
+        op = { context, _ ->
+            runLlvmOptimizationPipeline(context)
+        }
 )
 
 internal val produceOutputPhase = namedUnitPhase(

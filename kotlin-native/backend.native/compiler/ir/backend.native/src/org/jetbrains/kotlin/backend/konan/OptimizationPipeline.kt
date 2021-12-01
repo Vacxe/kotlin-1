@@ -5,8 +5,36 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.makeVisibilityHiddenLikeLlvmInternalizePass
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.konan.target.*
+
+private fun removeMultipleThreadDataLoads(context: Context, module: LLVMModuleRef) {
+    val currentThreadTLV = context.llvm.runtimeAnnotationMap["current_thread_tlv"]?.singleOrNull() ?: return
+    fun filterLoads(block: LLVMBasicBlockRef) = getInstructions(block)
+            .mapNotNull { LLVMIsALoadInst(it) }
+            .filter { inst ->
+                 LLVMGetOperand(inst, 0)?.let { LLVMIsAGlobalVariable(it) } == currentThreadTLV
+            }
+
+    fun process(function: LLVMValueRef) {
+        // calling LLVMGetEntryBasicBlock on external function is sigsegv on ios_arm toolchain by some reason, so let's check it first
+        LLVMGetFirstBasicBlock(function) ?: return
+        val entry = LLVMGetEntryBasicBlock(function) ?: return
+        val load = filterLoads(entry).firstOrNull() ?: return
+        getBasicBlocks(function)
+                .flatMap(::filterLoads)
+                .filter { it != load }
+                .toList()
+                .also { require(it.toSet().size == it.size) }
+                .forEach {
+                    LLVMReplaceAllUsesWith(it, load)
+                    LLVMInstructionRemoveFromParent(it)
+                }
+    }
+    getFunctions(module)
+            .filter { it.name?.startsWith("kfun:") == true }
+            .forEach { process(it) }
+}
 
 private fun initializeLlvmGlobalPassRegistry() {
     val passRegistry = LLVMGetGlobalPassRegistry()
@@ -186,6 +214,7 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
     if (shouldRunLateBitcodePasses(context)) {
         runLateBitcodePasses(context, llvmModule)
     }
+    removeMultipleThreadDataLoads(context, llvmModule)
 }
 
 internal fun RelocationModeFlags.currentRelocationMode(context: Context): RelocationModeFlags.Mode =
