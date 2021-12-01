@@ -80,11 +80,11 @@ val INTEGER_VARS: Set<ClassId> = SIGNED_VARS + UNSIGNED_VARS
 
 val CVARIABLE_ID = ClassId.fromString("kotlinx/cinterop/CVariable")
 
-val PHANTOM_SIGNED_INTEGER = ClassId.fromString("kotlin/SignedInteger")
-val PHANTOM_UNSIGNED_INTEGER = ClassId.fromString("kotlin/UnsignedInteger")
+val PHANTOM_SIGNED_INTEGER = ClassId.fromString("kotlin/PlatformInt")
+val PHANTOM_UNSIGNED_INTEGER = ClassId.fromString("kotlin/PlatformUInt")
 
-val PHANTOM_SIGNED_VAR_OF = ClassId.fromString("kotlinx/cinterop/SignedVarOf")
-val PHANTOM_UNSIGNED_VAR_OF = ClassId.fromString("kotlinx/cinterop/UnsignedVarOf")
+val PHANTOM_SIGNED_VAR_OF = ClassId.fromString("kotlinx/cinterop/PlatformIntVarOf")
+val PHANTOM_UNSIGNED_VAR_OF = ClassId.fromString("kotlinx/cinterop/PlatformUIntVarOf")
 
 val PHANTOM_INTEGERS: Set<ClassId> = setOf(
     PHANTOM_SIGNED_INTEGER, PHANTOM_UNSIGNED_INTEGER
