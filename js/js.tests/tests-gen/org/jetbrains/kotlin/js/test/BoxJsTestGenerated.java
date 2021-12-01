@@ -275,6 +275,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("contextDependentClassObjectName.kt")
+        public void testContextDependentClassObjectName() throws Exception {
+            runTest("js/js.translator/testData/box/classObject/contextDependentClassObjectName.kt");
+        }
+
+        @Test
         @TestMetadata("defaultObjectSameNamesAsInOuter.kt")
         public void testDefaultObjectSameNamesAsInOuter() throws Exception {
             runTest("js/js.translator/testData/box/classObject/defaultObjectSameNamesAsInOuter.kt");
@@ -516,6 +522,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("closureVarToScopeWithSameNameDeclaration.kt")
         public void testClosureVarToScopeWithSameNameDeclaration() throws Exception {
             runTest("js/js.translator/testData/box/closure/closureVarToScopeWithSameNameDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("contextDependentClosureName.kt")
+        public void testContextDependentClosureName() throws Exception {
+            runTest("js/js.translator/testData/box/closure/contextDependentClosureName.kt");
         }
 
         @Test
@@ -7774,6 +7786,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @Test
         public void testAllFilesPresentInObjectDeclaration() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/objectDeclaration"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @Test
+        @TestMetadata("contextDependentObjectName.kt")
+        public void testContextDependentObjectName() throws Exception {
+            runTest("js/js.translator/testData/box/objectDeclaration/contextDependentObjectName.kt");
         }
 
         @Test
