@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommo
 import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer
 import org.jetbrains.kotlin.commonizer.transformer.CirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.InlineTypeAliasCirNodeTransformer
-import org.jetbrains.kotlin.commonizer.transformer.phantom.PhantomGenerationTransformer
 import org.jetbrains.kotlin.commonizer.transformer.ReApproximationCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.ReApproximationCirNodeTransformer.SignatureBuildingContextProvider
-import org.jetbrains.kotlin.commonizer.transformer.phantom.PhantomIntegerSupertypeCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.tree.defaultCirTreeRootDeserializer
 import org.jetbrains.kotlin.commonizer.tree.mergeCirTree
@@ -86,7 +84,6 @@ private fun createTransformers(parameters: CommonizerParameters, classifiers: Ci
         parameters.storageManager, classifiers,
         SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = true)
     ),
-    PhantomGenerationTransformer(parameters.storageManager),
 )
 
 internal fun serializeTarget(

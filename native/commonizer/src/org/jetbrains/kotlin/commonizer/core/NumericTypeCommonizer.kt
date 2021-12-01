@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.ilt.NumericCirEntityIds
-import org.jetbrains.kotlin.commonizer.transformer.phantom.SIGNED_INTEGER_ID
-import org.jetbrains.kotlin.commonizer.transformer.phantom.SIGNED_VAR_OF_ID
-import org.jetbrains.kotlin.commonizer.transformer.phantom.UNSIGNED_INTEGER_ID
-import org.jetbrains.kotlin.commonizer.transformer.phantom.UNSIGNED_VAR_OF_ID
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.commonizer.ilt.asCirEntityId
+import org.jetbrains.kotlin.descriptors.konan.PHANTOM_SIGNED_INTEGER
+import org.jetbrains.kotlin.descriptors.konan.PHANTOM_SIGNED_VAR_OF
+import org.jetbrains.kotlin.descriptors.konan.PHANTOM_UNSIGNED_INTEGER
+import org.jetbrains.kotlin.descriptors.konan.PHANTOM_UNSIGNED_VAR_OF
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class NumericTypeCommonizer(
     typeCommonizer: TypeCommonizer
@@ -74,3 +73,8 @@ class NumericTypeCommonizer(
             isMarkedNullable = false,
         )
 }
+
+private val SIGNED_INTEGER_ID: CirEntityId get() = PHANTOM_SIGNED_INTEGER.asCirEntityId()
+private val SIGNED_VAR_OF_ID: CirEntityId get() = PHANTOM_SIGNED_VAR_OF.asCirEntityId()
+private val UNSIGNED_INTEGER_ID: CirEntityId get() = PHANTOM_UNSIGNED_INTEGER.asCirEntityId()
+private val UNSIGNED_VAR_OF_ID: CirEntityId get() = PHANTOM_UNSIGNED_VAR_OF.asCirEntityId()
