@@ -9,7 +9,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.KtStarProjectionTypeArgument
+import org.jetbrains.kotlin.analysis.api.KtTypeArgument
+import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -207,6 +211,12 @@ internal class KtSymbolByFirBuilder private constructor(
             }
         }
 
+        fun buildFunctionLikeSignature(fir: FirFunction): KtFunctionLikeSignature<KtFunctionLikeSymbol> {
+            if (fir is FirSimpleFunction && fir.origin != FirDeclarationOrigin.SamConstructor)
+                return buildFunctionSignature(fir)
+            return buildFunctionLikeSymbol(fir).toSignature()
+        }
+
         fun buildFunctionSymbol(fir: FirSimpleFunction): KtFirFunctionSymbol {
             fir.unwrapSubstitutionOverrideIfNeeded()?.let {
                 return buildFunctionSymbol(it)
@@ -214,6 +224,24 @@ internal class KtSymbolByFirBuilder private constructor(
 
             check(fir.origin != FirDeclarationOrigin.SamConstructor)
             return symbolsCache.cache(fir) { KtFirFunctionSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildFunctionSignature(fir: FirSimpleFunction): KtFunctionLikeSignature<KtFirFunctionSymbol> {
+            fir.symbol.ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            val functionSymbol = buildFunctionSymbol(fir)
+            return KtFunctionLikeSignature(
+                functionSymbol,
+                typeBuilder.buildKtType(fir.returnTypeRef),
+                fir.receiverTypeRef?.let { typeBuilder.buildKtType(it) },
+
+                functionSymbol.valueParameters.zip(fir.valueParameters).map { (ktSymbol, fir) ->
+                    KtVariableLikeSignature(
+                        ktSymbol,
+                        typeBuilder.buildKtType(fir.returnTypeRef),
+                        null
+                    )
+                }
+            )
         }
 
         fun buildAnonymousFunctionSymbol(fir: FirAnonymousFunction): KtFirAnonymousFunctionSymbol {
@@ -256,6 +284,11 @@ internal class KtSymbolByFirBuilder private constructor(
             }
         }
 
+        fun buildVariableLikeSignature(fir: FirVariable): KtVariableLikeSignature<KtVariableLikeSymbol> {
+            if (fir is FirProperty && !fir.isLocal && fir !is FirSyntheticProperty) return buildPropertySignature(fir)
+            return buildVariableLikeSymbol(fir).toSignature()
+        }
+
         fun buildVariableSymbol(fir: FirProperty): KtVariableSymbol {
             return when {
                 fir.isLocal -> buildLocalVariableSymbol(fir)
@@ -269,12 +302,21 @@ internal class KtSymbolByFirBuilder private constructor(
             checkRequirementForBuildingSymbol<KtKotlinPropertySymbol>(fir, fir !is FirSyntheticProperty)
 
             fir.unwrapSubstitutionOverrideIfNeeded()?.let {
-                return buildVariableSymbol(it)
+                return buildPropertySymbol(it)
             }
 
             return symbolsCache.cache(fir) {
                 KtFirKotlinPropertySymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
             }
+        }
+
+        fun buildPropertySignature(fir: FirProperty): KtVariableLikeSignature<KtVariableSymbol> {
+            fir.symbol.ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            return KtVariableLikeSignature(
+                buildPropertySymbol(fir),
+                typeBuilder.buildKtType(fir.returnTypeRef),
+                fir.receiverTypeRef?.let { typeBuilder.buildKtType(it) }
+            )
         }
 
         fun buildLocalVariableSymbol(fir: FirProperty): KtFirLocalVariableSymbol {
@@ -327,6 +369,15 @@ internal class KtSymbolByFirBuilder private constructor(
                 is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
                 is FirFunction -> functionLikeBuilder.buildFunctionLikeSymbol(fir)
                 is FirVariable -> variableLikeBuilder.buildVariableLikeSymbol(fir)
+                else -> throwUnexpectedElementError(fir)
+            }
+        }
+
+        fun buildCallableSignature(fir: FirCallableDeclaration): KtSignature<KtCallableSymbol> {
+            return when (fir) {
+                is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir).toSignature()
+                is FirFunction -> functionLikeBuilder.buildFunctionLikeSignature(fir)
+                is FirVariable -> variableLikeBuilder.buildVariableLikeSignature(fir)
                 else -> throwUnexpectedElementError(fir)
             }
         }
