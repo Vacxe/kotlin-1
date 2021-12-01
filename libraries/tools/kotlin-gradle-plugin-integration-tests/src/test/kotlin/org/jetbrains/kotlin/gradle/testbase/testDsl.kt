@@ -365,6 +365,7 @@ internal fun Path.enableAndroidSdk() {
             """.trimIndent()
         )
     acceptAndroidSdkLicenses(androidSdk)
+    applyAndroidTestFixes()
 }
 
 @OptIn(ExperimentalPathApi::class)
