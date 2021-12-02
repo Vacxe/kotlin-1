@@ -110,6 +110,8 @@ fun Project.projectTest(
         evaluationDependsOn(":test-instrumenter")
     }
     return getOrCreateTask<Test>(taskName) {
+        dependsOn(":createIdeaHomeForTests")
+
         doFirst {
             val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: mutableSetOf()
             val patterns = filter.includePatterns + commandLineIncludePatterns
@@ -192,7 +194,7 @@ fun Project.projectTest(
 
         maxHeapSize = "1600m"
         systemProperty("idea.is.unit.test", "true")
-        systemProperty("idea.home.path", project.intellijRootDir().canonicalPath)
+        systemProperty("idea.home.path", project.ideaHomePathForTests().canonicalPath)
         systemProperty("java.awt.headless", "true")
         environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
         environment("PROJECT_CLASSES_DIRS", project.testSourceSet.output.classesDirs.asPath)

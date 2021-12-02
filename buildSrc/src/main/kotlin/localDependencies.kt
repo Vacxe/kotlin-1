@@ -163,4 +163,10 @@ object IntellijRootUtils {
     }
 }
 
-fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
+fun Project.ideaHomePathForTests() = rootProject.buildDir.resolve("ideaHomeForTests")
+
+fun Project.writeIdeaBuildNumberForTests() {
+    val ideaHome = ideaHomePathForTests()
+    ideaHome.mkdirs()
+    File(ideaHome, "build.txt").writeText("IC-${rootProject.extra["versions.intellijSdk"]}")
+}
