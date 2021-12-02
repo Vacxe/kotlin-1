@@ -570,7 +570,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             generatedPhantoms()
             source(
                 """
-                typealias Proxy = SignedInteger
+                typealias Proxy = PlatformInt
                 typealias X = Proxy
                 expect val x: X
             """.trimIndent()
@@ -581,7 +581,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             generatedPhantoms()
             source(
                 """
-                typealias Proxy = SignedInteger
+                typealias Proxy = PlatformInt
                 typealias X = Proxy
                 expect val x: X
             """.trimIndent()

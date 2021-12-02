@@ -44,7 +44,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -64,7 +64,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -84,7 +84,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -102,7 +102,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -136,7 +136,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -156,7 +156,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -176,7 +176,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -196,7 +196,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -232,7 +232,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -252,7 +252,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -272,7 +272,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -292,7 +292,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -344,7 +344,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -364,7 +364,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -384,7 +384,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -404,7 +404,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -440,7 +440,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -460,7 +460,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -480,7 +480,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -500,7 +500,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -536,7 +536,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -556,7 +556,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -576,7 +576,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -596,7 +596,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
             """.trimIndent()
             )
         }
@@ -648,8 +648,8 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias A = UnsignedInteger
-                typealias X = kotlinx.cinterop.UnsignedVarOf<A>
+                typealias A = PlatformUInt
+                typealias X = kotlinx.cinterop.PlatformUIntVarOf<A>
             """.trimIndent()
             )
         }
@@ -679,8 +679,8 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias A = SignedInteger
-                typealias X = kotlinx.cinterop.SignedVarOf<A>
+                typealias A = PlatformInt
+                typealias X = kotlinx.cinterop.PlatformIntVarOf<A>
             """.trimIndent()
             )
         }
@@ -713,7 +713,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias A = SignedInteger
+                typealias A = PlatformInt
                 typealias B = A
                 typealias X = B
             """.trimIndent()
@@ -763,7 +763,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
                 expect fun x(p: X)
             """.trimIndent()
             )
@@ -780,7 +780,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
 
         result.assertCommonized("(a, b)") {
             generatedPhantoms()
-            source("expect val x: UnsignedInteger")
+            source("expect val x: PlatformUInt")
         }
     }
 
@@ -806,7 +806,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = UnsignedInteger
+                typealias X = PlatformUInt
                 expect val x: X 
             """.trimIndent()
             )
@@ -831,7 +831,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -848,7 +848,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -859,7 +859,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -870,7 +870,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias X = SignedInteger
+                typealias X = PlatformInt
             """.trimIndent()
             )
         }
@@ -905,7 +905,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                     package test                    
 
-                    typealias IntegerType = SignedInteger
+                    typealias IntegerType = PlatformInt
                     typealias IntegerTypeAlias = IntegerType
                 """.trimIndent(),
                 name = "test.kt"
@@ -953,14 +953,14 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 name = "test.kt", content = """
                 package test
                 
-                typealias Integer = SignedInteger
-                typealias IntegerVar = kotlinx.cinterop.SignedVarOf<Integer>
+                typealias Integer = PlatformInt
+                typealias IntegerVar = kotlinx.cinterop.PlatformIntVarOf<Integer>
             """.trimIndent()
             )
         }
     }
 
-    // Int + Long -> SingedInteger; SignedInteger + Long -> SignedInteger
+    // Int + Long -> SingedInteger; PlatformInt + Long -> PlatformInt
     fun `test two step commonization emits correct phantom supertypes`() {
         val result = commonize {
             outputTarget("(a, b)", "(a, b, c)")
@@ -990,7 +990,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                 package test
                 
-                typealias Integer = SignedInteger
+                typealias Integer = PlatformInt
             """.trimIndent()
             )
         }
@@ -1001,13 +1001,13 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                 package test
                 
-                typealias Integer = SignedInteger
+                typealias Integer = PlatformInt
             """.trimIndent()
             )
         }
     }
 
-    // Int + Long -> SingedInteger; SignedInteger + Long -> SignedInteger
+    // Int + Long -> SingedInteger; PlatformInt + Long -> PlatformInt
     fun `test two step commonization with two intermediate targets and different aliases`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -1047,7 +1047,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                 package test
                 
-                typealias Integer = SignedInteger
+                typealias Integer = PlatformInt
             """.trimIndent()
             )
         }
@@ -1058,7 +1058,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                 package test
                 
-                typealias Integer = SignedInteger
+                typealias Integer = PlatformInt
             """.trimIndent()
             )
         }
@@ -1069,7 +1069,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
                 """
                 package test
                 
-                typealias Integer = SignedInteger
+                typealias Integer = PlatformInt
             """.trimIndent()
             )
         }
@@ -1099,7 +1099,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias Inner = SignedInteger
+                typealias Inner = PlatformInt
                 typealias Outer = Inner
             """.trimIndent()
             )
@@ -1109,7 +1109,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias Outer = SignedInteger
+                typealias Outer = PlatformInt
             """.trimIndent()
             )
         }
@@ -1144,7 +1144,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias Inner = SignedInteger
+                typealias Inner = PlatformInt
                 typealias Outer = Inner
             """.trimIndent()
             )
@@ -1154,7 +1154,7 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias Different = SignedInteger
+                typealias Different = PlatformInt
                 typealias Outer = Different
             """.trimIndent()
             )
@@ -1164,14 +1164,15 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias Outer = SignedInteger
+                typealias Outer = PlatformInt
             """.trimIndent()
             )
         }
     }
 
+    // TODO(kirpichenkov): KT-49375
     // ((LongVar, IntVar), ShortVar), (ByteVar, IntVar))
-    fun `test multi-level commonization of chained integer variable type aliases`() {
+    fun `todo multi-level commonization of chained integer variable type aliases`() {
         val result = commonize {
             outputTarget("(a, b)", "(a, b, c)", "(d, e)", "(a, b, c, d, e)")
 
@@ -1236,11 +1237,11 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias Ab = SignedInteger
+                typealias Ab = PlatformInt
                 typealias Abc = Ab
                 typealias Abcde = Abc
                 
-                typealias AbVar = kotlinx.cinterop.SignedVarOf<Ab>
+                typealias AbVar = kotlinx.cinterop.PlatformIntVarOf<Ab>
                 typealias AbcVar = AbVar
                 typealias AbcdeVar = AbcVar                
             """.trimIndent()
@@ -1251,10 +1252,10 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias Abc = SignedInteger
+                typealias Abc = PlatformInt
                 typealias Abcde = Abc
                 
-                expect class AbcVar : kotlinx.cinterop.SignedVarOf<Abc>
+                expect class AbcVar : kotlinx.cinterop.PlatformIntVarOf<Abc>
                 typealias AbcdeVar = AbcVar                
             """.trimIndent()
             )
@@ -1264,10 +1265,10 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias De = SignedInteger
+                typealias De = PlatformInt
                 typealias Abcde = De
                 
-                expect class DeVar : kotlinx.cinterop.SignedVarOf<De>
+                expect class DeVar : kotlinx.cinterop.PlatformIntVarOf<De>
                 typealias AbcdeVar = DeVar                    
                 """.trimIndent()
             )
@@ -1277,9 +1278,9 @@ class HierarchicalNumbersTypeCommonizerTest : AbstractInlineSourcesCommonization
             generatedPhantoms()
             source(
                 """
-                typealias Abcde = SignedInteger
+                typealias Abcde = PlatformInt
 
-                expect class AbcdeVar : kotlinx.cinterop.SignedVarOf<Abcde>
+                expect class AbcdeVar : kotlinx.cinterop.PlatformIntVarOf<Abcde>
                 """.trimIndent()
             )
         }
@@ -1315,7 +1316,7 @@ private fun InlineSourceBuilder.ModuleBuilder.unsignedVarIntegers() {
         class UShortVarOf<T : UShort>
         class UIntVarOf<T : UInt>
         class ULongVarOf<T : ULong>
-        """.trimIndent(), "UnsignedVarOf.kt"
+        """.trimIndent(), "PlatformUIntVarOf.kt"
     )
 }
 
@@ -1327,7 +1328,7 @@ private fun InlineSourceBuilder.ModuleBuilder.singedVarIntegers() {
         class ShortVarOf<T : Short>
         class IntVarOf<T : Int>
         class LongVarOf<T : Long>
-        """.trimIndent(), "SignedVarOf.kt"
+        """.trimIndent(), "PlatformIntVarOf.kt"
     )
 }
 
@@ -1337,8 +1338,8 @@ internal fun InlineSourceBuilder.ModuleBuilder.generatedPhantoms() {
             name = "phantomIntegers.kt", content = """
             package kotlin        
 
-            expect interface UnsignedInteger
-            expect interface SignedInteger
+            expect interface PlatformUInt
+            expect interface PlatformInt
         """.trimIndent()
         )
 
@@ -1347,8 +1348,8 @@ internal fun InlineSourceBuilder.ModuleBuilder.generatedPhantoms() {
                 package kotlinx.cinterop
 
                 open class CVariable
-                expect open class SignedVarOf<T : kotlin.SignedInteger> : CVariable
-                expect open class UnsignedVarOf<T : kotlin.UnsignedInteger> : CVariable
+                expect open class PlatformIntVarOf<T : kotlin.PlatformInt> : CVariable
+                expect open class PlatformUIntVarOf<T : kotlin.PlatformUInt> : CVariable
             """.trimIndent()
         )
     }
