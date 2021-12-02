@@ -16,6 +16,9 @@ fun TestEntityModel.containsWithoutJvmInline(): Boolean = when (this) {
     else -> false
 }
 
+private fun TargetBackend.isRecursivelyCompatibleWith(targetBackend: TargetBackend): Boolean =
+    this == targetBackend || this != TargetBackend.ANY && this.compatibleWith.isRecursivelyCompatibleWith(targetBackend)
+
 fun methodModelLocator(
     rootDir: File,
     file: File,
@@ -34,7 +37,11 @@ fun methodModelLocator(
     tags
 ).let { methodModel ->
     if (methodModel.containsWithoutJvmInline()) {
-        val isWithoutAnnotations = if (targetBackend == TargetBackend.JVM_IR) listOf(true, false) else listOf(false)
+        val isWithoutAnnotations = when {
+            targetBackend.isRecursivelyCompatibleWith(TargetBackend.JVM_IR) -> listOf(true, false)
+            targetBackend.isRecursivelyCompatibleWith(TargetBackend.JVM) -> listOf(true)
+            else -> listOf(false)
+        }
         isWithoutAnnotations.map { WithoutJvmInlineTestMethodModel(methodModel, it) }
     } else listOf(methodModel)
 }

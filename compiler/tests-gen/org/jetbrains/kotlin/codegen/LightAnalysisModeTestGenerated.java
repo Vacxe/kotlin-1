@@ -15651,8 +15651,8 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
 
         @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
-        public void testBoxResultInlineClassOfConstructorCall_valueClasses() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", s -> s.replaceAll("OPTIONAL_JVM_INLINE_ANNOTATION", ""));
+        public void testBoxResultInlineClassOfConstructorCall() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", s -> s.replaceAll("OPTIONAL_JVM_INLINE_ANNOTATION", "@kotlin.jvm.JvmInline"));
         }
 
         @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSet.kt")
