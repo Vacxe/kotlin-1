@@ -71,7 +71,8 @@ class CallAndReferenceGenerator(
         explicitReceiverExpression: IrExpression?
     ): IrExpression {
         val symbol = callableReferenceAccess.calleeReference.toSymbolForCall(
-            callableReferenceAccess.dispatchReceiver, session, classifierStorage, declarationStorage, conversionScope
+            callableReferenceAccess.dispatchReceiver, session, classifierStorage, declarationStorage, conversionScope,
+            explicitReceiver = callableReferenceAccess.explicitReceiver
         )
         val type = callableReferenceAccess.typeRef.toIrType()
         // val x by y ->
