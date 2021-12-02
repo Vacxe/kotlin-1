@@ -48,3 +48,13 @@ annotation class JvmDefault
 @RequireKotlin("1.4", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Target(AnnotationTarget.CLASS)
 annotation class JvmDefaultWithoutCompatibility
+
+/**
+ * Forces binary compatibility stubs generation for interfaces switched from '-Xjvm-default=disable' mode to '-Xjvm-default=all'
+ *
+ * Used only with `-Xjvm-default=all`. For more details refer to '-Xjvm-default' documentation
+ */
+@SinceKotlin("1.6")
+@RequireKotlin("1.6", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+@Target(AnnotationTarget.CLASS)
+annotation class JvmDefaultWithCompatibility
