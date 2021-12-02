@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.regex.Pattern
 
-fun TestEntityModel.containsWithoutJvmInline(backend: TargetBackend): Boolean = backend == TargetBackend.JVM_IR && when (this) {
-    is ClassModel -> methods.any { it.containsWithoutJvmInline(backend) } || innerTestClasses.any { it.containsWithoutJvmInline(backend) }
-    is SimpleTestMethodModel -> file.readLines().any { Regex("^\\s*//\\s*WORKS_WHEN_VALUE_CLASS\\s*$").matches(it) }
+fun TestEntityModel.containsWithoutJvmInline(): Boolean = when (this) {
+    is ClassModel -> methods.any { it.containsWithoutJvmInline() } || innerTestClasses.any { it.containsWithoutJvmInline() }
+    is SimpleTestMethodModel -> file.isFile && file.readLines().any { Regex("^\\s*//\\s*WORKS_WHEN_VALUE_CLASS\\s*$").matches(it) }
     else -> false
 }
 
@@ -33,6 +33,8 @@ fun methodModelLocator(
     skipIgnored,
     tags
 ).let { methodModel ->
-    if (methodModel.containsWithoutJvmInline(targetBackend)) listOf(true, false).map { WithoutJvmInlineTestMethodModel(methodModel, it) }
-    else listOf(methodModel)
+    if (methodModel.containsWithoutJvmInline()) {
+        val isWithoutAnnotations = if (targetBackend == TargetBackend.JVM_IR) listOf(true, false) else listOf(false)
+        isWithoutAnnotations.map { WithoutJvmInlineTestMethodModel(methodModel, it) }
+    } else listOf(methodModel)
 }

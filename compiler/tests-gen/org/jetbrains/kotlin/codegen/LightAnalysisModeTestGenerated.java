@@ -15612,6 +15612,10 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
 
+        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath, transformer);
+        }
+
         public void testAllFilesPresentInInlineClasses() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
@@ -15647,8 +15651,8 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
 
         @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
-        public void testBoxResultInlineClassOfConstructorCall() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt");
+        public void testBoxResultInlineClassOfConstructorCall_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", s -> s.replaceAll("OPTIONAL_JVM_INLINE_ANNOTATION", ""));
         }
 
         @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSet.kt")
