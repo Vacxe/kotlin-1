@@ -10861,7 +10861,8 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface")
                 @TestDataPath("$PROJECT_ROOT")
-                @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+                @Tag("daily")
+                @UseExtTestCaseGroupProvider()
                 public class FunInterface {
                     @Test
                     public void testAllFilesPresentInFunInterface() throws Exception {
@@ -13075,7 +13076,8 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/dataClasses/components")
             @TestDataPath("$PROJECT_ROOT")
-            @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+            @Tag("daily")
+            @UseExtTestCaseGroupProvider()
             public class Components {
                 @Test
                 public void testAllFilesPresentInComponents() throws Exception {
@@ -16267,7 +16269,8 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/extensionClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+        @Tag("daily")
+        @UseExtTestCaseGroupProvider()
         public class ExtensionClasses {
             @Test
             public void testAllFilesPresentInExtensionClasses() throws Exception {
@@ -16505,7 +16508,8 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers")
             @TestDataPath("$PROJECT_ROOT")
-            @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+            @Tag("daily")
+            @UseExtTestCaseGroupProvider()
             public class ContextReceivers {
                 @Test
                 public void testAllFilesPresentInContextReceivers() throws Exception {
@@ -16641,7 +16645,8 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP")
                 @TestDataPath("$PROJECT_ROOT")
-                @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+                @Tag("daily")
+                @UseExtTestCaseGroupProvider()
                 public class FromKEEP {
                     @Test
                     public void testAllFilesPresentInFromKEEP() throws Exception {
@@ -21416,7 +21421,8 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter")
                 @TestDataPath("$PROJECT_ROOT")
-                @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+                @Tag("daily")
+                @UseExtTestCaseGroupProvider()
                 public class DefaultWithDefaultParameter {
                     @Test
                     @TestMetadata("all.kt")
