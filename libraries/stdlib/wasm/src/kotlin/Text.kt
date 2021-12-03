@@ -48,13 +48,8 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
  */
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
-public actual fun CharArray.concatToString(): String {
-    var result = ""
-    for (char in this) {
-        result += char
-    }
-    return result
-}
+public actual fun CharArray.concatToString(): String =
+    String.unsafeFromCharArray(this.copyOf())
 
 /**
  * Concatenates characters in this [CharArray] or its subrange into a String.
@@ -70,11 +65,7 @@ public actual fun CharArray.concatToString(): String {
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
-    var result = ""
-    for (index in startIndex until endIndex) {
-        result += this[index]
-    }
-    return result
+    return String.unsafeFromCharArray(this.copyOfRange(startIndex, endIndex))
 }
 
 /**
@@ -252,26 +243,16 @@ public actual fun String.decapitalize(): String = replaceFirstChar(Char::lowerca
  */
 public actual fun CharSequence.repeat(n: Int): String {
     require(n >= 0) { "Count 'n' must be non-negative, but was $n." }
+    if (isEmpty()) return ""
     return when (n) {
         0 -> ""
         1 -> this.toString()
         else -> {
-            var result = ""
-            if (!isEmpty()) {
-                var s = this.toString()
-                var count = n
-                while (true) {
-                    if ((count and 1) == 1) {
-                        result += s
-                    }
-                    count = count ushr 1
-                    if (count == 0) {
-                        break
-                    }
-                    s += s
+            buildString(n * length) {
+                repeat(n) {
+                    append(this@repeat)
                 }
             }
-            return result
         }
     }
 }
@@ -628,7 +609,7 @@ actual fun Long.toString(radix: Int): String {
     val isNegative = this < 0
     val buffer = CharArray(Long.SIZE_BITS + 1)
 
-    var currentBufferIndex= buffer.lastIndex
+    var currentBufferIndex = buffer.lastIndex
     var current: Long = this
     while(current != 0L) {
         buffer[currentBufferIndex] = abs(current % radix).getChar()

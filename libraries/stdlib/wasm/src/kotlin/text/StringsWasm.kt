@@ -29,7 +29,7 @@ internal actual fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int {
  * Returns the index within this string of the first occurrence of the specified substring, starting from the specified offset.
  */
 internal actual fun String.nativeIndexOf(str: String, fromIndex: Int): Int {
-    for (index in fromIndex.coerceAtLeast(0)..this.length) {
+    for (index in fromIndex.coerceAtLeast(0)..(this.length - str.length)) {
         if (str.regionMatchesImpl(0, this, index, str.length, false)) {
             return index
         }
@@ -41,7 +41,7 @@ internal actual fun String.nativeIndexOf(str: String, fromIndex: Int): Int {
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
  */
 internal actual fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int {
-    for (index in fromIndex.coerceAtMost(this.lastIndex) downTo 0) {
+    for (index in fromIndex.coerceAtMost(this.length - str.length) downTo 0) {
         if (str.regionMatchesImpl(0, this, index, str.length, false)) {
             return index
         }
