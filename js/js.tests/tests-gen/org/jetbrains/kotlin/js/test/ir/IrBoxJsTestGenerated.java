@@ -6629,6 +6629,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("privatePropertyAccessFromMethod.kt")
+        public void testPrivatePropertyAccessFromMethod() throws Exception {
+            runTest("js/js.translator/testData/box/jsExport/privatePropertyAccessFromMethod.kt");
+        }
+
+        @Test
         @TestMetadata("recursiveExport.kt")
         public void testRecursiveExport() throws Exception {
             runTest("js/js.translator/testData/box/jsExport/recursiveExport.kt");
