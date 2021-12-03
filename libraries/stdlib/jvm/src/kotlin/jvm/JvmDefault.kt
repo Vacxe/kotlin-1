@@ -50,9 +50,9 @@ annotation class JvmDefault
 annotation class JvmDefaultWithoutCompatibility
 
 /**
- * Forces binary compatibility stubs generation for interfaces switched from '-Xjvm-default=disable' mode to '-Xjvm-default=all'
+ * Forces the compiler to generate compatibility accessors for the annotated interface in the `DefaultImpls` class.
  *
- * Used only with `-Xjvm-default=all`. For more details refer to '-Xjvm-default' documentation
+ * Used only with `-Xjvm-default=all`. For more details refer to `-Xjvm-default` documentation.
  */
 @SinceKotlin("1.6")
 @RequireKotlin("1.6", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
