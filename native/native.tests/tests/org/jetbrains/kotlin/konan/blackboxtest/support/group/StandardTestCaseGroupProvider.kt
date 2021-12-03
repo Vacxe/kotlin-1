@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import java.io.File
 
 internal class StandardTestCaseGroupProvider(private val environment: TestEnvironment) : TestCaseGroupProvider {
+    val sourceTransformers: MutableMap<File, List<(String) -> String>> = mutableMapOf()
+
     // Load test cases in groups on demand.
     private val lazyTestCaseGroups = ThreadSafeFactory<File, TestCaseGroup?> { testDataDir ->
         val testDataFiles = testDataDir.listFiles()
@@ -34,6 +36,10 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
         }
 
         TestCaseGroup.Default(disabledTestDataFileNames = emptySet(), testCases = testCases)
+    }
+
+    override fun setPreprocessors(testDataDir: File, preprocessors: List<(String) -> String>) {
+        sourceTransformers[testDataDir] = preprocessors
     }
 
     override fun getTestCaseGroup(testDataDir: File) = lazyTestCaseGroups[testDataDir]
@@ -100,7 +106,9 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
             }
         }
 
-        testDataFile.readLines().forEachIndexed { lineNumber, line ->
+        val text =
+            (sourceTransformers[testDataFile] ?: listOf()).fold(testDataFile.readText()) { source, transformer -> transformer(source) }
+        text.lines().forEachIndexed { lineNumber, line ->
             val location = Location(testDataFile, lineNumber)
             val expectFileDirectiveAfterModuleDirective =
                 lastParsedDirective == TestDirectives.MODULE // Only FILE directive may follow MODULE directive.

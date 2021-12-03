@@ -9,5 +9,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseGroup
 import java.io.File
 
 internal interface TestCaseGroupProvider {
+    fun setPreprocessors(testDataDir: File, preprocessors: List<(String) -> String>)
     fun getTestCaseGroup(testDataDir: File): TestCaseGroup?
 }
