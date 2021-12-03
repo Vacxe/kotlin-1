@@ -44,15 +44,13 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
+import java.io.DataInputStream
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.jdkHome
-import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.util.KotlinJars
-import kotlin.script.experimental.jvm.withUpdatedClasspath
 
 const val SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.base.compiler.arguments"
 
@@ -233,8 +231,22 @@ private fun createInitialCompilerConfiguration(
 
         setupJvmSpecificArguments(baseArguments)
 
-        // Default value differs from the argument's default (see #KT-29405 and #KT-29319)
-        put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
+        val definedTarget = scriptCompilationConfiguration[ScriptCompilationConfiguration.jvm.jvmTarget]
+        if (definedTarget != null) {
+            val target = JvmTarget.values().find { it.description == definedTarget }
+            if (target == null) {
+                messageCollector.report(
+                    CompilerMessageSeverity.STRONG_WARNING, "Unknown JVM target \"$definedTarget\", using default"
+                )
+            } else {
+                put(JVMConfigurationKeys.JVM_TARGET, target)
+            }
+        } else if (scriptCompilationConfiguration.containsKey(ScriptCompilationConfiguration.jvm.getJvmTargetFromClass)) {
+            val classToCheck = scriptCompilationConfiguration[ScriptCompilationConfiguration.jvm.getJvmTargetFromClass]!!.typeName
+            detectJvmTargetByClass(classToCheck, hostConfiguration, messageCollector)?.let {
+                put(JVMConfigurationKeys.JVM_TARGET, it)
+            }
+        }
 
         val jdkHomeFromConfigurations = scriptCompilationConfiguration[ScriptCompilationConfiguration.jvm.jdkHome]
             // TODO: check if this is redundant and/or incorrect since the default is now taken from the host configuration anyway (the one linked to the compilation config)
@@ -278,6 +290,46 @@ private fun createInitialCompilerConfiguration(
 
         configureAdvancedJvmOptions(baseArguments)
     }
+}
+
+private fun detectJvmTargetByClass(
+    classToCheck: String,
+    hostConfiguration: ScriptingHostConfiguration,
+    messageCollector: MessageCollector
+): JvmTarget? {
+    val resourceName = classToCheck.replace('.', '/') + ".class"
+    val classLoader = hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
+    val stream =
+        if (classLoader != null) classLoader.getResourceAsStream(resourceName)
+        else ClassLoader.getSystemResourceAsStream(resourceName)
+    if (stream == null) {
+        messageCollector.report(
+            CompilerMessageSeverity.STRONG_WARNING,
+            "Unable to detect JVM target from class ${classToCheck}: class not found in the classloader, using default"
+        )
+    } else {
+        val dstream = DataInputStream(stream)
+        val magicByte1 = dstream.readUnsignedShort()
+        val magicByte2 = dstream.readUnsignedShort()
+        @Suppress("UNUSED_VARIABLE") val minorVersion = dstream.readUnsignedShort()
+        val majorVersion = dstream.readUnsignedShort()
+
+        if (magicByte1 != 0xcafe || magicByte2 != 0xbabe) {
+            messageCollector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "Unable to detect JVM target from class ${classToCheck}: unrecognized bytecode, using default"
+            )
+        } else {
+            for (target in JvmTarget.values()) {
+                if (majorVersion <= target.majorVersion) return target
+            }
+            messageCollector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "Unable to detect JVM target from class ${classToCheck}: unknown version $majorVersion, using default"
+            )
+        }
+    }
+    return null
 }
 
 internal fun collectRefinedSourcesAndUpdateEnvironment(
