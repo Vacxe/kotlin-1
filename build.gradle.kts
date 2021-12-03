@@ -1170,6 +1170,9 @@ if (disableVerificationTasks) {
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
         nodeVersion = "16.13.0"
+        npmInstallTaskProvider!!.configure {
+            args += listOf("--network-concurrency", "1", "--mutex", "network")
+        }
     }
 }
 
