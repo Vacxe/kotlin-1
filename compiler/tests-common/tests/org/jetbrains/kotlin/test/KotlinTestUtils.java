@@ -20,6 +20,7 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -488,11 +489,29 @@ public class KotlinTestUtils {
         runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), null, testDataFilePath, contentTransformer);
     }
 
-    private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath, @SuppressWarnings("unused") @Nullable Function<String, String> contentTransformer) throws Exception {
+    @NotNull
+    @Contract(pure = true)
+    private static DoTest fileTransformingDoTest(@NotNull DoTest test, @Nullable Function<String, String> contentTransformer) {
+        return contentTransformer == null ? test : filePath -> {
+            File testDataFile = new File(filePath);
+            String initialSource = KtTestUtil.doLoadFile(testDataFile);
+            String realSource = contentTransformer.apply(initialSource);
+            if (initialSource.equals(realSource)) {
+                test.invoke(filePath);
+            } else {
+                File newFile = FileUtil.createTempFile("", ".kt");
+                FileUtil.writeToFile(newFile, realSource);
+                test.invoke(newFile.getCanonicalPath());
+            }
+        };
+    }
+
+    private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath, @Nullable Function<String, String> contentTransformer) throws Exception {
+        DoTest realTest = fileTransformingDoTest(test, contentTransformer);
         if (testCase != null && !isRunTestOverridden(testCase)) {
             Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
                 try {
-                    test.invoke(testDataFilePath);
+                    realTest.invoke(testDataFilePath);
                 }
                 catch (Exception e) {
                     throw new IllegalStateException(e);
@@ -504,7 +523,7 @@ public class KotlinTestUtils {
                 return;
             }
         }
-        test.invoke(testDataFilePath);
+        realTest.invoke(testDataFilePath);
     }
 
     private static boolean isRunTestOverridden(TestCase testCase) {
