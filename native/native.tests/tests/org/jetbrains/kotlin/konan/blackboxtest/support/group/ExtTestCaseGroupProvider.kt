@@ -38,7 +38,7 @@ import java.io.File
 internal class ExtTestCaseGroupProvider(
     private val environment: TestEnvironment
 ) : TestCaseGroupProvider, TestDisposable(parentDisposable = environment) {
-    private val sourceTransformers: MutableMap<File, List<(String) -> String>> = mutableMapOf()
+    private val sourceTransformers: MutableMap<String, List<(String) -> String>> = mutableMapOf()
     private val structureFactory = ExtTestDataFileStructureFactory(parentDisposable = this)
     private val sharedModules = ThreadSafeCache<String, TestModule.Shared?>()
 
@@ -56,7 +56,9 @@ internal class ExtTestCaseGroupProvider(
         val testCases = mutableListOf<TestCase>()
 
         testDataFiles.forEach { testDataFile ->
-            val extTestDataFile = ExtTestDataFile(environment, structureFactory, testDataFile, sourceTransformers[testDataFile] ?: listOf())
+            val extTestDataFile = ExtTestDataFile(
+                environment, structureFactory, testDataFile, sourceTransformers[testDataFile.canonicalPath] ?: listOf()
+            )
 
             if (extTestDataFile.isRelevant)
                 testCases += extTestDataFile.createTestCase(
@@ -71,7 +73,10 @@ internal class ExtTestCaseGroupProvider(
     }
 
     override fun setPreprocessors(testDataDir: File, preprocessors: List<(String) -> String>) {
-        sourceTransformers[testDataDir] = preprocessors
+        if (preprocessors.isNotEmpty())
+            sourceTransformers[testDataDir.canonicalPath] = preprocessors
+        else
+            sourceTransformers.remove(testDataDir.canonicalPath)
     }
 
     override fun getTestCaseGroup(testDataDir: File): TestCaseGroup? {
@@ -822,7 +827,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
         private val generatedFiles = TestFiles.createTestFiles(
             /* testFileName = */ DEFAULT_FILE_NAME,
-            /* expectedText = */ sourceTransformers.fold(originalTestDataFile.readText()) { source, transformer -> transformer(source) },
+            /* expectedText = */ originalTestDataFile.applySourceTransformers(sourceTransformers),
             /* factory = */ testFileFactory,
             /* preserveLocations = */ true
         )

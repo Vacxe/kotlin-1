@@ -24,12 +24,15 @@ internal class TestRunProvider(
     private val compilationFactory = TestCompilationFactory(environment)
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
 
-    fun getSingleTestRun(testDataFile: File, sourceTransformers: List<(String) -> String>): TestRun {
+    fun setProcessors(testDataFile: File, sourceTransformers: List<(String) -> String>) {
+        testCaseGroupProvider.setPreprocessors(testDataFile, sourceTransformers)
+    }
+
+    fun getSingleTestRun(testDataFile: File): TestRun {
         environment.assertNotDisposed()
 
         val testDataDir = testDataFile.parentFile
         val testDataFileName = testDataFile.name
-        testCaseGroupProvider.setPreprocessors(testDataFile, sourceTransformers)
 
         val testCaseGroup = testCaseGroupProvider.getTestCaseGroup(testDataDir) ?: fail { "No test case for $testDataFile" }
         assumeTrue(testCaseGroup.isEnabled(testDataFileName), "Test case is disabled")
